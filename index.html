@@ -8,7 +8,9 @@
 <body>
 <x-dc>
 <helmet data-dc-atomics>
+<script src="sensors.js"></script>
 <style>
+*,*::before,*::after{box-sizing:border-box}
 html,body{margin:0;background:#0e1216;-webkit-text-size-adjust:100%;overscroll-behavior-y:contain}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;color:#dbe2ea;-webkit-font-smoothing:antialiased}
 a{color:#39b7c6;text-decoration:none}a:hover{color:#6fd8e4}
@@ -85,14 +87,14 @@ select,input{font-family:inherit}
         <sc-for list="{{ profileOpts }}" as="p" hint-placeholder-count="5"><option value="{{ p.v }}">{{ p.label }}</option></sc-for>
       </select>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">L (mm)</div><input type="number" step="100" value="{{ L }}" onChange="{{ setL }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">h (mm)</div><input type="number" step="5" value="{{ h }}" onChange="{{ seth }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">I (10⁶mm⁴)</div><input type="number" step="0.01" value="{{ Imm }}" onChange="{{ setI }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">L (mm)</div><input type="number" step="100" value="{{ L }}" onChange="{{ setL }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">h (mm)</div><input type="number" step="5" value="{{ h }}" onChange="{{ seth }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">I (10⁶mm⁴)</div><input type="number" step="0.01" value="{{ Imm }}" onChange="{{ setI }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">E (MPa)</div><input type="number" step="1000" value="{{ E }}" onChange="{{ setE }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">α (µε/°C)</div><input type="number" step="0.1" value="{{ alphaU }}" onChange="{{ setAlpha }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">ν</div><input type="number" step="0.01" value="{{ nu }}" onChange="{{ setNu }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">E (MPa)</div><input type="number" step="1000" value="{{ E }}" onChange="{{ setE }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">α (µε/°C)</div><input type="number" step="0.1" value="{{ alphaU }}" onChange="{{ setAlpha }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">ν</div><input type="number" step="0.01" value="{{ nu }}" onChange="{{ setNu }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
       </div>
     </div>
 
@@ -143,8 +145,8 @@ select,input{font-family:inherit}
       <div style="display:flex;align-items:baseline;gap:10px;margin-top:12px"><div style="font-size:13px;color:#8b97a5">Excitation Vₑₓ</div><div style="margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:13px">{{ vVex }}</div></div>
       <input type="range" min="1" max="10" step="0.5" value="{{ Vex }}" onInput="{{ setVex }}">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px">
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Lead length (m)</div><input type="number" step="1" min="0" value="{{ leadLen }}" onChange="{{ setLeadLen }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Ω/m per conductor</div><input type="number" step="0.01" min="0" value="{{ leadRes }}" onChange="{{ setLeadRes }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Lead length (m)</div><input type="number" step="1" min="0" value="{{ leadLen }}" onChange="{{ setLeadLen }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Ω/m per conductor</div><input type="number" step="0.01" min="0" value="{{ leadRes }}" onChange="{{ setLeadRes }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
       </div>
       <div style="display:flex;gap:9px;margin-top:12px">
         <button onClick="{{ doCal }}" style="flex:1;min-height:46px;background:#39b7c6;color:#04222a;border:none;border-radius:10px;font-size:13.5px;font-weight:650;font-family:inherit;cursor:pointer">Calibrate (zero)</button>
@@ -159,7 +161,7 @@ select,input{font-family:inherit}
       <div style="font-size:11.5px;color:#8b97a5;line-height:1.55">{{ leadNote }}</div>
       <div style="display:flex;align-items:baseline;gap:10px;margin-top:12px"><div style="font-size:13px;color:#8b97a5">Sun/shade R₁ vs R₃</div><div style="margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:13px">{{ vResGrad }}</div></div>
       <input type="range" min="-40" max="40" step="1" value="{{ resGrad }}" onInput="{{ setResGrad }}">
-      <div><div style="font-size:11px;color:#5f6b78;margin:6px 0 4px">Resistor tempco (ppm/°C)</div><input type="number" step="1" min="0" value="{{ resTempco }}" onChange="{{ setResTempco }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+      <div><div style="font-size:11px;color:#5f6b78;margin:6px 0 4px">Resistor tempco (ppm/°C)</div><input type="number" step="1" min="0" value="{{ resTempco }}" onChange="{{ setResTempco }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
       <div style="font-size:11.5px;color:#8b97a5;line-height:1.55;margin-top:10px">{{ resGradNote }}</div>
     </div>
   </div>
@@ -186,7 +188,7 @@ select,input{font-family:inherit}
               <select value="{{ g.face }}" onChange="{{ g.setFace }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-size:13px;width:100%;min-height:44px">
                 <sc-for list="{{ faceOpts }}" as="f" hint-placeholder-count="4"><option value="{{ f.v }}">{{ f.label }}</option></sc-for>
               </select></div>
-            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">x (mm)</div><input type="number" step="10" value="{{ g.x }}" onChange="{{ g.setX }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">x (mm)</div><input type="number" step="10" value="{{ g.x }}" onChange="{{ g.setX }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
             <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Direction</div>
               <select value="{{ g.orient }}" onChange="{{ g.setOrient }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-size:13px;width:100%;min-height:44px">
                 <option value="long">Along (‖)</option><option value="trans">Transverse (⊥)</option>
@@ -199,9 +201,9 @@ select,input{font-family:inherit}
               <select value="{{ g.dummy }}" onChange="{{ g.setDummy }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-size:13px;width:100%;min-height:44px">
                 <option value="0">no</option><option value="1">yes</option>
               </select></div>
-            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">GF</div><input type="number" step="0.01" value="{{ g.GF }}" onChange="{{ g.setGF }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">R₀ (Ω)</div><input type="number" step="10" value="{{ g.R0 }}" onChange="{{ g.setR0 }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">STC α (µε/°C)</div><input type="number" step="0.1" value="{{ g.stc }}" onChange="{{ g.setStc }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">GF</div><input type="number" step="0.01" value="{{ g.GF }}" onChange="{{ g.setGF }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">R₀ (Ω)</div><input type="number" step="10" value="{{ g.R0 }}" onChange="{{ g.setR0 }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">STC α (µε/°C)</div><input type="number" step="0.1" value="{{ g.stc }}" onChange="{{ g.setStc }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
             <button onClick="{{ g.dup }}" style="min-height:44px;background:transparent;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;font-size:13px;font-family:inherit;cursor:pointer">Duplicate</button>
             <button onClick="{{ g.del }}" style="min-height:44px;background:transparent;border:1px solid #3a444f;color:#e0684b;border-radius:9px;font-size:13px;font-family:inherit;cursor:pointer">Delete</button>
           </div>
@@ -222,17 +224,70 @@ select,input{font-family:inherit}
       <select value="{{ accV.preset }}" onChange="{{ accSet.preset }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:11px 10px;font-size:13.5px;width:100%;min-height:46px">
         <sc-for list="{{ presetOpts }}" as="p" hint-placeholder-count="4"><option value="{{ p.v }}">{{ p.label }}</option></sc-for>
       </select>
+      <div style="font-size:11px;color:#5f6b78;margin-top:6px">{{ presetNote }}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px">
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Noise density (µg/√Hz)</div><input type="number" step="0.1" min="0" value="{{ accV.nd }}" onChange="{{ accSet.nd }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Offset bias (mg)</div><input type="number" step="0.1" value="{{ accV.bias }}" onChange="{{ accSet.bias }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Bias drift (mg RMS)</div><input type="number" step="0.01" min="0" value="{{ accV.bi }}" onChange="{{ accSet.bi }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Scale-factor error (%)</div><input type="number" step="0.05" value="{{ accV.sf }}" onChange="{{ accSet.sf }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Range (±g)</div><input type="number" step="1" min="0.1" value="{{ accV.range }}" onChange="{{ accSet.range }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">ADC (bit)</div><input type="number" step="1" min="6" max="24" value="{{ accV.bits }}" onChange="{{ accSet.bits }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Bandwidth (Hz)</div><input type="number" step="1" min="1" value="{{ accV.bw }}" onChange="{{ accSet.bw }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Sample rate (Hz)</div><input type="number" step="1" min="16" value="{{ accV.fs }}" onChange="{{ accSet.fs }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Noise density (µg/√Hz)</div><input type="number" step="0.1" min="0" value="{{ accV.nd }}" onChange="{{ accSet.nd }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Offset bias (mg)</div><input type="number" step="0.1" value="{{ accV.bias }}" onChange="{{ accSet.bias }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Bias drift (mg RMS)</div><input type="number" step="0.01" min="0" value="{{ accV.bi }}" onChange="{{ accSet.bi }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Scale-factor error (%)</div><input type="number" step="0.05" value="{{ accV.sf }}" onChange="{{ accSet.sf }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Range (±g)</div><input type="number" step="1" min="0.1" value="{{ accV.range }}" onChange="{{ accSet.range }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">ADC (bit)</div><input type="number" step="1" min="6" max="24" value="{{ accV.bits }}" onChange="{{ accSet.bits }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Bandwidth (Hz)</div><input type="number" step="1" min="1" value="{{ accV.bw }}" onChange="{{ accSet.bw }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Sample rate (Hz)</div><input type="number" step="1" min="16" value="{{ accV.fs }}" onChange="{{ accSet.fs }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
       </div>
-      <div style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#5f6b78;margin-top:10px;line-height:1.5">{{ sensorNote }}</div>
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin:16px 0 4px">Noise spec band</div>
+      <div style="font-size:11.5px;color:#5f6b78;line-height:1.45;margin-bottom:8px">The density above is only valid inside this band. Outside it the model uses typical behaviour, which you can adjust.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Valid from (Hz)</div><input type="number" step="0.1" min="0" value="{{ accV.nfLo }}" onChange="{{ accSet.nfLo }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Valid to (Hz)</div><input type="number" step="1" min="0.5" value="{{ accV.nfHi }}" onChange="{{ accSet.nfHi }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Low-f rise (dB/decade)</div><input type="number" step="1" min="0" value="{{ accV.lfSlope }}" onChange="{{ accSet.lfSlope }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Low-f cap (×)</div><input type="number" step="1" min="1" value="{{ accV.lfCap }}" onChange="{{ accSet.lfCap }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div style="grid-column:1/-1"><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Above band (× density)</div><input type="number" step="0.1" min="0" value="{{ accV.hfMult }}" onChange="{{ accSet.hfMult }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+      </div>
+
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin:16px 0 4px">Low-frequency response &amp; phase error</div>
+      <div style="font-size:11.5px;color:#5f6b78;line-height:1.45;margin-bottom:8px">Phase error = atan(1/ωτ). Data sheets rarely state it, but the amplitude error at two low frequencies pins τ.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;background:#20272f;border:1px solid #3a444f;border-radius:10px;padding:4px">
+        <sc-for list="{{ hpModeOpts }}" as="m" hint-placeholder-count="3">
+          <button onClick="{{ m.on }}" style="min-height:40px;border:none;border-radius:7px;font-size:11.5px;cursor:pointer;font-family:inherit;font-weight:600;background:{{ m.bg }};color:{{ m.fg }}">{{ m.label }}</button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ hpIsFit }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px">
+          <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Gain error (dB)</div><input type="number" step="0.1" value="{{ accV.hpDb1 }}" onChange="{{ accSet.hpDb1 }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">at frequency (Hz)</div><input type="number" step="0.01" min="0.001" value="{{ accV.hpF1 }}" onChange="{{ accSet.hpF1 }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Gain error (%)</div><input type="number" step="0.5" value="{{ accV.hpPct2 }}" onChange="{{ accSet.hpPct2 }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">at frequency (Hz)</div><input type="number" step="0.05" min="0.001" value="{{ accV.hpF2 }}" onChange="{{ accSet.hpF2 }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hpIsManual }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:10px"><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Time constant τ (s)</div><input type="number" step="0.1" min="0.001" value="{{ accV.tau }}" onChange="{{ accSet.tau }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+      </sc-if>
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#8b97a5;margin-top:10px;line-height:1.5">{{ tauNote }}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px">
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Group time delay (ms)</div><input type="number" step="0.05" min="0" value="{{ accV.tdel }}" onChange="{{ accSet.tdel }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Constant phase offset (°)</div><input type="number" step="1" value="{{ accV.phOff }}" onChange="{{ accSet.phOff }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+      </div>
+
+      <button onClick="{{ zeroOffsets }}" style="width:100%;min-height:44px;margin-top:14px;background:transparent;border:1px solid #3a444f;color:#dbe2ea;border-radius:10px;font-size:13.5px;font-family:inherit;cursor:pointer">Zero the systematic errors</button>
+      <div style="font-size:11px;color:#5f6b78;margin-top:6px;line-height:1.45">Sets offset bias, bias drift and scale-factor error to 0 — noise and frequency response are left untouched.</div>
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#5f6b78;margin-top:12px;line-height:1.5">{{ sensorNote }}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin:16px 0 8px">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5">Noise density</div>
+        <div style="margin-left:auto;display:flex;gap:10px;font-size:10.5px;font-family:ui-monospace,Menlo,monospace">
+          <span style="color:#8b97a5">-- sensor</span><span style="color:#39b7c6">— at output</span>
+        </div>
+      </div>
+      <canvas ref="{{ ndRef }}" style="display:block;width:100%;height:150px"></canvas>
+      <div style="font-size:11.5px;color:#8b97a5;line-height:1.55;margin-top:10px">{{ ndNote }}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin:16px 0 8px">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5">Sensor response</div>
+        <div style="margin-left:auto;display:flex;gap:10px;font-size:10.5px;font-family:ui-monospace,Menlo,monospace">
+          <span style="color:#39b7c6">— gain</span><span style="color:#c98bd0">-- phase</span>
+        </div>
+      </div>
+      <canvas ref="{{ frfRef }}" style="display:block;width:100%;height:150px"></canvas>
+      <div style="font-size:11.5px;color:#8b97a5;line-height:1.55;margin-top:10px">{{ frfNote }}</div>
     </div>
 
     <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
@@ -252,31 +307,31 @@ select,input{font-family:inherit}
             </sc-for>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px">
-            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Amplitude ({{ ampUnit }})</div><input type="number" step="0.001" value="{{ accV.amp }}" onChange="{{ accSet.amp }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Frequency (Hz)</div><input type="number" step="0.1" min="0.1" value="{{ accV.freq }}" onChange="{{ accSet.freq }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Amplitude ({{ ampUnit }})</div><input type="number" step="0.001" value="{{ accV.amp }}" onChange="{{ accSet.amp }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Frequency (Hz)</div><input type="number" step="0.1" min="0.1" value="{{ accV.freq }}" onChange="{{ accSet.freq }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
           </div>
         </div>
       </sc-if>
 
       <sc-if value="{{ isStochastic }}" hint-placeholder-val="{{ false }}">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px">
-          <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Std σ (m/s²)</div><input type="number" step="0.01" min="0" value="{{ accV.std }}" onChange="{{ accSet.std }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-          <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Lower frequency (Hz)</div><input type="number" step="0.1" min="0.1" value="{{ accV.fmin }}" onChange="{{ accSet.fmin }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Std σ (m/s²)</div><input type="number" step="0.01" min="0" value="{{ accV.std }}" onChange="{{ accSet.std }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Lower frequency (Hz)</div><input type="number" step="0.1" min="0.1" value="{{ accV.fmin }}" onChange="{{ accSet.fmin }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
           <sc-if value="{{ isBroadband }}" hint-placeholder-val="{{ false }}">
-            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Upper frequency (Hz)</div><input type="number" step="1" min="1" value="{{ accV.fmax }}" onChange="{{ accSet.fmax }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Upper frequency (Hz)</div><input type="number" step="1" min="1" value="{{ accV.fmax }}" onChange="{{ accSet.fmax }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
           </sc-if>
           <sc-if value="{{ isDamped }}" hint-placeholder-val="{{ false }}">
-            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Natural frequency fₙ (Hz)</div><input type="number" step="0.5" min="0.1" value="{{ accV.fn }}" onChange="{{ accSet.fn }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Natural frequency fₙ (Hz)</div><input type="number" step="0.5" min="0.1" value="{{ accV.fn }}" onChange="{{ accSet.fn }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
           </sc-if>
           <sc-if value="{{ isDamped }}" hint-placeholder-val="{{ false }}">
-            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Damping ζ (–)</div><input type="number" step="0.005" min="0.001" max="1" value="{{ accV.zeta }}" onChange="{{ accSet.zeta }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Damping ζ (–)</div><input type="number" step="0.005" min="0.001" max="1" value="{{ accV.zeta }}" onChange="{{ accSet.zeta }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
           </sc-if>
         </div>
       </sc-if>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px">
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">High-pass for integration (Hz)</div><input type="number" step="0.05" min="0.01" value="{{ accV.fhp }}" onChange="{{ accSet.fhp }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
-        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Random seed</div><input type="number" step="1" min="1" value="{{ accV.seed }}" onChange="{{ accSet.seed }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">High-pass for integration (Hz)</div><input type="number" step="0.05" min="0.01" value="{{ accV.fhp }}" onChange="{{ accSet.fhp }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Random seed</div><input type="number" step="1" min="1" value="{{ accV.seed }}" onChange="{{ accSet.seed }}" onBlur="{{ clearDrafts }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
       </div>
       <button onClick="{{ reroll }}" style="width:100%;min-height:48px;margin-top:12px;background:#39b7c6;color:#04222a;border:none;border-radius:11px;font-size:14.5px;font-weight:650;font-family:inherit;cursor:pointer">Re-simulate</button>
     </div>
@@ -378,12 +433,18 @@ const CASES = [
   layout:[{arm:1,face:"bunn",orient:"long"},{arm:2,face:"topp",orient:"long"},{arm:3,face:"topp",orient:"trans"},{arm:4,face:"bunn",orient:"trans"}]}
 ];
 
-const PRESETS = {
-  consumer:{label:"MEMS consumer (phone)",nd:200,bias:20,bi:0.5,sf:1.5,range:8,bits:12,bw:200},
-  industrial:{label:"MEMS industrial",nd:25,bias:5,bi:0.05,sf:0.5,range:16,bits:16,bw:1000},
-  iepe:{label:"Piezoelectric IEPE",nd:5,bias:0.2,bi:0.01,sf:0.3,range:50,bits:24,bw:5000},
-  servo:{label:"Force-balance servo",nd:0.5,bias:1,bi:0.005,sf:0.05,range:2,bits:24,bw:300},
-  custom:{label:"Custom"}
+/* The sensor library lives in sensors.json so new instruments can be added
+   without touching the code. "custom" is always present. */
+/* Descriptive data-sheet field names in sensors.js → internal parameter keys. */
+const PRESET_FIELDS={
+  nd:"noiseDensity_ug_per_rtHz", nfLo:"specBandFrom_Hz", nfHi:"specBandTo_Hz",
+  lfSlope:"riseBelowBand_dB_per_decade", lfCap:"riseBelowBand_cap_x", hfMult:"densityAboveBand_x",
+  bias:"offsetBias_mg", bi:"biasDrift_mg_rms", sf:"scaleFactorError_percent",
+  range:"measuringRange_g", bits:"adcResolution_bits",
+  bw:"bandwidth_Hz", tdel:"groupTimeDelay_ms", phOff:"constantPhaseOffset_deg",
+  hpMode:"lowFrequencyMode", tau:"timeConstant_s",
+  hpDb1:"gainErrorPoint1_dB", hpF1:"gainErrorPoint1_at_Hz",
+  hpPct2:"gainErrorPoint2_percent", hpF2:"gainErrorPoint2_at_Hz"
 };
 const MOTIONS = {harmonic:"Harmonic",white:"White noise",pink:"Pink noise",damped:"Damped harmonic"};
 
@@ -400,6 +461,7 @@ function fftRun(re,im,inv){
       re[i+k]=ur+vr;im[i+k]=ui+vi;re[i+k+half]=ur-vr;im[i+k+half]=ui-vi;}}}
   if(inv){for(let i=0;i<n;i++){re[i]/=n;im[i]/=n;}}
 }
+function t2Safe(v){return Math.max(v,1e-9);}
 function rms(a){let s=0;for(let i=0;i<a.length;i++)s+=a[i]*a[i];return Math.sqrt(s/a.length);}
 function peak(a){let m=0;for(let i=0;i<a.length;i++)m=Math.max(m,Math.abs(a[i]));return m;}
 function demean(a){let s=0;for(let i=0;i<a.length;i++)s+=a[i];const m=s/a.length;const o=new Float64Array(a.length);for(let i=0;i<a.length;i++)o[i]=a[i]-m;return o;}
@@ -413,8 +475,10 @@ class Component extends DCLogic {
     profile:"heb200",
     calOffset:null, calOffsetNoLead:null,
     gauges:[{id:1,name:"G1",face:"topp",x:2000,t:0.5,orient:"long",GF:2.0,R0:350,alphaStc:11.7e-6,arm:1,dummy:false}],
-    open:1,
-    acc:{preset:"industrial",nd:25,bias:5,bi:0.05,sf:0.5,range:16,bits:16,bw:1000,fs:512,
+    open:1, drafts:{}, presets:{custom:{label:"Custom"}}, presetError:false,
+    acc:{preset:"custom",nd:25,bias:0,bi:0,sf:0,range:16,bits:16,bw:1000,fs:512,
+         nfLo:1,nfHi:500,lfSlope:10,lfCap:40,hfMult:1,phOff:0,
+         hpMode:"none",tau:1.6,hpF1:0.1,hpDb1:-3,hpF2:0.5,hpPct2:-10,tdel:0,
          motion:"harmonic",quantity:"disp",amp:0.002,freq:12,
          std:0.5,fmin:1,fmax:120,fn:18,zeta:0.03,fhp:0.8,seed:7},
     sim:null
@@ -423,13 +487,30 @@ class Component extends DCLogic {
   beamRef = React.createRef();
   bridgeRef = React.createRef();
   accRef = React.createRef();
+  frfRef = React.createRef();
+  ndRef = React.createRef();
   dispRef = React.createRef();
   psdRef = React.createRef();
 
   componentDidMount(){
     this.setState({sim:this.simulate(this.state.acc)});
+    this.loadSensors();
     this._ro = () => this.forceUpdate();
     window.addEventListener("resize", this._ro);
+  }
+  /* sensors.js assigns window.SENSORS; it is loaded from <helmet>, so it is
+     normally there already — poll briefly in case the script is still parsing. */
+  loadSensors(tries){
+    const d=window.SENSORS;
+    if(d&&d.sensors){
+      const presets={};
+      d.sensors.forEach(s=>{ if(s&&s.id) presets[s.id]=s; });
+      presets.custom={label:"Custom"};
+      this.setState({presets,presetError:false});
+      return;
+    }
+    if((tries||0)<20) setTimeout(()=>this.loadSensors((tries||0)+1),50);
+    else this.setState({presetError:true});
   }
   componentWillUnmount(){ window.removeEventListener("resize", this._ro); }
   componentDidUpdate(){ this.drawAll(); }
@@ -508,6 +589,71 @@ class Component extends DCLogic {
     while(N/fs < need && N < 32768) N*=2;
     return N;
   }
+  /* Equivalent noise bandwidth: white density integrated up to the band limit.
+     A 2-pole Butterworth has ENBW = 1.111·f_c; above Nyquist the sample rate rules. */
+  /* The quoted noise density is only valid inside the spec band [nfLo, nfHi].
+     Below it the density rises (flicker/1-f noise) at lfSlope dB per decade,
+     capped at lfCap×; above it the density is hfMult× the quoted value. */
+  specBand(a){
+    const nyq=Math.max(16,a.fs)/2;
+    const lo=Math.max(0,Math.min(a.nfLo,nyq));
+    const hi=Math.max(lo+1e-6,Math.min(a.nfHi,nyq));
+    return {lo,hi};
+  }
+  noiseDensity(a,f){           // µg/√Hz at frequency f
+    const sb=this.specBand(a);
+    if(f>=sb.lo&&f<=sb.hi) return a.nd;
+    if(f>sb.hi) return a.nd*Math.max(0,a.hfMult);
+    const dec=Math.log10(Math.max(sb.lo,1e-6)/Math.max(f,1e-6));
+    return a.nd*Math.min(Math.max(1,a.lfCap), Math.pow(10,(a.lfSlope*dec)/20));
+  }
+  /* RMS of the shaped density over [f0,f1], seen through the sensor filter */
+  noiseRms(a,f0,f1,filtered){
+    const n=240; if(f1<=f0) return 0;
+    const l0=Math.log10(Math.max(f0,1e-4)), l1=Math.log10(f1);
+    let s=0, fPrev=Math.pow(10,l0);
+    for(let i=1;i<=n;i++){
+      const fc=Math.pow(10,l0+(l1-l0)*i/n), fm=Math.sqrt(fPrev*fc), df=fc-fPrev;
+      const d=this.noiseDensity(a,fm)*1e-6*G*(filtered?this.sensorMag(a,fm):1);
+      s+=d*d*df; fPrev=fc;
+    }
+    return Math.sqrt(s);
+  }
+  charFreq(a){
+    if(a.motion==="harmonic") return Math.max(0.01,Math.min(a.freq,Math.max(16,a.fs)/2*0.9));
+    if(a.motion==="damped") return Math.max(0.01,a.fn);
+    return Math.sqrt(Math.max(0.01,a.fmin)*Math.max(0.02,a.fmax));
+  }
+  noiseFloor(a){ const sb=this.specBand(a); return a.nd*1e-6*G*Math.sqrt(sb.hi-sb.lo); }
+  noiseTotal(a){ return this.noiseRms(a,Math.max(Math.max(16,a.fs)/this.recordLength(a),1e-3),Math.max(16,a.fs)/2,true); }
+  /* Low-frequency behaviour is a single-pole high-pass with time constant τ.
+     |H| = ωτ/√(1+(ωτ)²)  →  a gain error g at f implies ωτ = g/√(1−g²).
+     Phase error is then a lead of atan(1/(ωτ)), as in the data-sheet figure. */
+  tauFromGain(g,f){
+    const gg=Math.min(Math.max(g,1e-6),0.999999);
+    return (gg/Math.sqrt(1-gg*gg))/(2*Math.PI*Math.max(f,1e-9));
+  }
+  tauFit(a){
+    const t1=this.tauFromGain(Math.pow(10,a.hpDb1/20),a.hpF1);
+    const t2=this.tauFromGain(1+a.hpPct2/100,a.hpF2);
+    return {t1,t2,tau:Math.sqrt(t1*t2)};
+  }
+  tauOf(a){
+    if(a.hpMode==="none") return 0;
+    if(a.hpMode==="manual") return Math.max(1e-6,a.tau);
+    return this.tauFit(a).tau;
+  }
+  hpMag(a,f){ const tau=this.tauOf(a); if(!tau) return 1;
+    const x=2*Math.PI*f*tau; return x/Math.sqrt(1+x*x); }
+  lpMag(a,f){ return 1/Math.sqrt(1+Math.pow(f/Math.max(a.bw,1e-6),4)); }
+  sensorMag(a,f){ return this.hpMag(a,f)*this.lpMag(a,f); }
+  sensorPhase(a,f){
+    const r=f/Math.max(a.bw,1e-6);
+    const lp=-Math.atan2(Math.SQRT2*r,1-r*r)*180/Math.PI;
+    const tau=this.tauOf(a);
+    const hp=tau?Math.atan(1/(2*Math.PI*Math.max(f,1e-9)*tau))*180/Math.PI:0;
+    return lp + hp - 360*f*(a.tdel*1e-3) + (f>0?a.phOff:0);
+  }
   simulate(a){
     const N=this.recordLength(a), fs=Math.max(16,a.fs), dt=1/fs, T=N/fs;
     const rnd=mulberry32(Math.floor(a.seed)*2654435761%4294967296+1);
@@ -538,18 +684,41 @@ class Component extends DCLogic {
     const sigN=a.nd*1e-6*G*Math.sqrt(fs/2);
     const biasOff=a.bias*1e-3*G, biasRw=a.bi*1e-3*G;
     const tau=Math.max(2,T/6), alphaLp=dt/tau;
+    // noise shaped by the density curve (quoted value only inside the spec band)
+    const noise=new Float64Array(N);
+    {
+      const re=new Float64Array(N),im=new Float64Array(N), df=fs/N;
+      let want=0;
+      for(let k=1;k<N/2;k++){
+        const fk=k*df, d=this.noiseDensity(a,fk)*1e-6*G;
+        want+=d*d*df;
+        const amp=d*randn(), ph=2*Math.PI*rnd();
+        re[k]=amp*Math.cos(ph); im[k]=amp*Math.sin(ph);
+        re[N-k]=re[k]; im[N-k]=-im[k];
+      }
+      fftRun(re,im,true);
+      const have=rms(re)||1, sc=Math.sqrt(want)/have;
+      for(let i=0;i<N;i++)noise[i]=re[i]*sc;
+    }
     let drift=0; const meas=new Float64Array(N);
     for(let i=0;i<N;i++){
       drift += alphaLp*(-drift) + Math.sqrt(2*alphaLp)*biasRw*randn();
-      meas[i]=aTrue[i]*(1+a.sf/100)+biasOff+drift+sigN*randn();
+      meas[i]=aTrue[i]*(1+a.sf/100)+biasOff+drift+noise[i];
     }
-    // bandwidth (magnitude-only 2-pole roll-off)
-    if(a.bw<nyq){
+    // sensor transfer function: 2-pole magnitude AND phase, plus delay / phase offset
+    {
       const re=new Float64Array(N),im=new Float64Array(N);
       for(let i=0;i<N;i++)re[i]=meas[i];
       fftRun(re,im,false);
-      for(let k=0;k<N;k++){const kk=k<=N/2?k:k-N,f=Math.abs(kk)*fs/N;
-        const H=1/Math.sqrt(1+Math.pow(f/a.bw,4));re[k]*=H;im[k]*=H;}
+      for(let k=0;k<N;k++){
+        const kk=k<=N/2?k:k-N, fa=Math.abs(kk)*fs/N;
+        const H=this.sensorMag(a,fa);
+        let ph=this.sensorPhase(a,fa)*Math.PI/180;
+        if(kk<0) ph=-ph;                       // keep the output real
+        const c=Math.cos(ph)*H, s2=Math.sin(ph)*H;
+        const r0=re[k], i0=im[k];
+        re[k]=r0*c-i0*s2; im[k]=r0*s2+i0*c;
+      }
       fftRun(re,im,true);
       for(let i=0;i<N;i++)meas[i]=re[i];
     }
@@ -578,12 +747,18 @@ class Component extends DCLogic {
       m:{rmsATrue:rA,rmsAMeas:rms(meas),rmsAErr:eA,snrA:rA>0?20*Math.log10(rA/Math.max(eA,1e-15)):0,
          peakA:peak(aTrue),rmsDTrue:rDt,rmsDEst:rms(dE0),rmsDErr:eD,
          relD:rDt>0?100*eD/rDt:0,peakD:peak(dT0),clip:100*clipped/N,
-         noiseFloor:sigN,lsb,driftRms:biasRw}};
+         noiseFloor:this.noiseFloor(a),noiseTotal:this.noiseTotal(a),
+         nLoRms:this.noiseRms(a,Math.max(fs/N,1e-3),this.specBand(a).lo,true),
+         specBand:this.specBand(a),
+         phaseDeg:this.sensorPhase(a,this.charFreq(a)),
+         charF:this.charFreq(a),
+         lagMs:this.charFreq(a)>0?-this.sensorPhase(a,this.charFreq(a))/360/this.charFreq(a)*1000:0,
+         lsb,driftRms:biasRw}};
   }
-  rerun(patch){
+  rerun(patch,drafts){
     const acc=Object.assign({},this.state.acc,patch);
     if(patch && !("preset" in patch)) acc.preset="custom";
-    this.setState({acc,sim:this.simulate(acc)});
+    this.setState({acc,sim:this.simulate(acc),drafts:drafts||{}});
   }
 
   /* ---------- canvas drawing ---------- */
@@ -731,8 +906,127 @@ class Component extends DCLogic {
       d.forEach((pt,i)=>{const x=X(pt.f),y=Y(pt.a);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
       ctx.stroke(); ctx.globalAlpha=1;
     });
-    ctx.fillStyle="#5f6b78"; ctx.textAlign="right"; ctx.font="9.5px ui-monospace,Menlo,monospace";
-    ctx.fillText("m/s² (log)",pad.l-5,pad.t+8);
+    ctx.fillStyle="#5f6b78"; ctx.textAlign="left"; ctx.font="9.5px ui-monospace,Menlo,monospace";
+    ctx.fillText("m/s² (log)",pad.l+4,pad.t+9);
+  }
+  drawFrf(a){
+    const p=this.prep(this.frfRef,150); if(!p) return;
+    const {ctx,w,h}=p, pad={l:44,r:42,t:10,b:20};
+    ctx.fillStyle="#20272f"; ctx.fillRect(0,0,w,h);
+    const iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+    const nyq=Math.max(16,a.fs)/2, f1=nyq;
+    const tau=this.tauOf(a), corner=tau?1/(2*Math.PI*tau):0;
+    const f0=Math.max(0.002, Math.min(nyq/4096, corner?corner/20:1e9));
+    const lx=Math.log10(f0), lw=Math.log10(f1)-lx;
+    const X=f=>pad.l+iw*(Math.log10(Math.max(f,f0))-lx)/lw;
+    const dbMin=-60, Y=db=>pad.t+ih*(1-(Math.max(db,dbMin)-dbMin)/(3-dbMin));
+    const PH=ff=>this.sensorPhase(a,ff);
+    const lim=this.specBand(a);
+    if(lim.hi>lim.lo){
+      const x0=X(Math.max(lim.lo,f0)), x1=X(lim.hi);
+      ctx.fillStyle="rgba(57,183,198,.14)"; ctx.fillRect(x0,pad.t,Math.max(1,x1-x0),ih);
+      ctx.strokeStyle="rgba(57,183,198,.5)"; ctx.setLineDash([3,3]); ctx.lineWidth=1;
+      [x0,x1].forEach(x=>{ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ih);ctx.stroke();});
+      ctx.setLineDash([]);
+    }
+    ctx.strokeStyle="#2c343d"; ctx.lineWidth=1;
+    [0,-20,-40,-60].forEach(db=>{
+      const y=Y(db); ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke();
+      ctx.fillStyle="#5f6b78"; ctx.font="9.5px ui-monospace,Menlo,monospace"; ctx.textAlign="right";
+      ctx.fillText(db+" dB",pad.l-5,y+3);
+    });
+    for(let d=Math.ceil(Math.log10(f0));d<=Math.log10(f1);d++){
+      const x=X(Math.pow(10,d));
+      ctx.strokeStyle="#2c343d"; ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,pad.t+ih); ctx.stroke();
+      if(x<w-pad.r-16){
+        ctx.fillStyle="#5f6b78"; ctx.textAlign="center"; ctx.font="9.5px ui-monospace,Menlo,monospace";
+        ctx.fillText(Math.pow(10,d)+" Hz",x,h-6);
+      }
+    }
+    // phase curve on its own scale
+    let pMin=0,pMax=0;
+    for(let px=0;px<=iw;px++){const d=PH(Math.pow(10,lx+lw*px/iw));pMin=Math.min(pMin,d);pMax=Math.max(pMax,d);}
+    const pLo=Math.min(-90,Math.floor(pMin/45)*45), pHi=Math.max(0,Math.ceil(pMax/45)*45);
+    const YP=d=>pad.t+ih*(1-(Math.max(Math.min(d,pHi),pLo)-pLo)/(pHi-pLo));
+    ctx.strokeStyle="#c98bd0"; ctx.lineWidth=1.5; ctx.setLineDash([4,3]); ctx.beginPath();
+    for(let px=0;px<=iw;px++){
+      const f=Math.pow(10,lx+lw*px/iw);
+      const x=pad.l+px, y=YP(this.sensorPhase(a,f)); px?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle="#c98bd0"; ctx.font="9.5px ui-monospace,Menlo,monospace"; ctx.textAlign="left";
+    ctx.fillText(pHi+"°",w-pad.r+5,YP(pHi)+8);
+    ctx.fillText("0°",w-pad.r+5,YP(0)+3);
+    ctx.fillText(pLo+"°",w-pad.r+5,YP(pLo)-2);
+    ctx.strokeStyle="#39b7c6"; ctx.lineWidth=1.8; ctx.beginPath();
+    for(let px=0;px<=iw;px++){
+      const f=Math.pow(10,lx+lw*px/iw);
+      const db=20*Math.log10(Math.max(this.sensorMag(a,f),1e-6));
+      const x=pad.l+px, y=Y(db); px?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.stroke();
+    if(corner>=f0&&corner<=f1){
+      const xh=X(corner);
+      ctx.strokeStyle="rgba(217,164,65,.45)"; ctx.setLineDash([3,3]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(xh,pad.t); ctx.lineTo(xh,pad.t+ih); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle="#d9a441"; ctx.font="9.5px ui-monospace,Menlo,monospace"; ctx.textAlign="left";
+      ctx.fillText("1/2πτ "+corner.toFixed(3)+" Hz",xh+5,Y(-34));
+    }
+    ctx.fillStyle="#d9a441"; ctx.font="9.5px ui-monospace,Menlo,monospace";
+    if(a.bw<=f1){
+      const xc=X(a.bw), yc=Y(-3.01), right=xc>w*0.7;
+      ctx.beginPath(); ctx.arc(xc,yc,3.2,0,7); ctx.fill();
+      ctx.textAlign=right?"right":"left";
+      ctx.fillText("f_c "+a.bw+" Hz (−3 dB)",xc+(right?-7:7),yc+14);
+    } else {
+      ctx.textAlign="left";
+      ctx.fillText("f_c "+a.bw+" Hz — above Nyquist",pad.l+6,Y(-46));
+    }
+  }
+  drawNoise(a){
+    const p=this.prep(this.ndRef,150); if(!p) return;
+    const {ctx,w,h}=p, pad={l:50,r:10,t:10,b:20};
+    ctx.fillStyle="#20272f"; ctx.fillRect(0,0,w,h);
+    const iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+    const nyq=Math.max(16,a.fs)/2, sb=this.specBand(a);
+    const tau=this.tauOf(a), corner=tau?1/(2*Math.PI*tau):0;
+    const f0=Math.max(0.002,Math.min(nyq/4096,corner?corner/20:1e9)), f1=nyq;
+    const lx=Math.log10(f0), lw=Math.log10(f1)-lx;
+    const X=ff=>pad.l+iw*(Math.log10(Math.max(ff,f0))-lx)/lw;
+    let dMax=a.nd, dMin=a.nd;
+    for(let px=0;px<=iw;px++){const ff=Math.pow(10,lx+lw*px/iw);
+      const d=this.noiseDensity(a,ff), de=d*this.sensorMag(a,ff);
+      dMax=Math.max(dMax,d); dMin=Math.min(dMin,Math.max(de,a.nd*1e-3));}
+    const hi=Math.log10(dMax)+0.2, lo=Math.log10(Math.max(dMin,1e-6))-0.2;
+    const Y=d=>pad.t+ih*(1-(Math.log10(Math.max(d,1e-9))-lo)/(hi-lo));
+    if(sb.hi>sb.lo){
+      const x0=X(Math.max(sb.lo,f0)),x1=X(sb.hi);
+      ctx.fillStyle="rgba(57,183,198,.14)"; ctx.fillRect(x0,pad.t,Math.max(1,x1-x0),ih);
+    }
+    ctx.strokeStyle="#2c343d"; ctx.lineWidth=1;
+    for(let d=Math.ceil(lo);d<=hi;d++){
+      const y=Y(Math.pow(10,d)); if(y<pad.t||y>pad.t+ih) continue;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke();
+      ctx.fillStyle="#5f6b78"; ctx.font="9.5px ui-monospace,Menlo,monospace"; ctx.textAlign="right";
+      ctx.fillText(Math.pow(10,d)+"",pad.l-5,y+3);
+    }
+    for(let d=Math.ceil(Math.log10(f0));d<=Math.log10(f1);d++){
+      const x=X(Math.pow(10,d));
+      ctx.strokeStyle="#2c343d"; ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,pad.t+ih); ctx.stroke();
+      ctx.fillStyle="#5f6b78"; ctx.textAlign="center"; ctx.font="9.5px ui-monospace,Menlo,monospace";
+      ctx.fillText(Math.pow(10,d)+" Hz",x,h-6);
+    }
+    [[false,"#8b97a5",[4,3]],[true,"#39b7c6",[]]].forEach(([filt,col,dash])=>{
+      ctx.strokeStyle=col; ctx.lineWidth=filt?1.8:1.3; ctx.setLineDash(dash); ctx.beginPath();
+      for(let px=0;px<=iw;px++){
+        const ff=Math.pow(10,lx+lw*px/iw);
+        const d=this.noiseDensity(a,ff)*(filt?this.sensorMag(a,ff):1);
+        const x=pad.l+px,y=Y(d); px?ctx.lineTo(x,y):ctx.moveTo(x,y);
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+    });
+    ctx.fillStyle="#5f6b78"; ctx.textAlign="left"; ctx.font="9.5px ui-monospace,Menlo,monospace";
+    ctx.fillText("µg/√Hz",pad.l+4,pad.t+9);
   }
   drawAll(){
     if(this.state.tab==="beam") this.drawBeam();
@@ -751,6 +1045,8 @@ class Component extends DCLogic {
         {data:cut(s.dEst),color:"#d9a441",w:1.2,alpha:.95}],
         {unit:"mm",tmax:span/s.fs,fmt:v=>(v*1000).toFixed(2)});
       this.drawPsd(s);
+      this.drawFrf(this.state.acc);
+      this.drawNoise(this.state.acc);
     }
   }
 
@@ -781,7 +1077,17 @@ class Component extends DCLogic {
   onBeamUp = ()=>{ this._drag=null; };
 
   /* ---------- helpers ---------- */
-  set(k){ return e=>this.setState({[k]:parseFloat(e.target.value)}); }
+  set(k){ return e=>this.setState({[k]:parseFloat(e.target.value)}); }   // sliders: always valid
+  /* Number inputs keep the raw string while it is being typed, so the field can be
+     cleared or hold an intermediate value ("", "-", "0.") without snapping back. */
+  dv(key,val){ const d=this.state.drafts[key]; return d===undefined?val:d; }
+  clearDrafts = ()=>{ if(Object.keys(this.state.drafts).length) this.setState({drafts:{}}); };
+  draft(key,raw,commit){
+    const drafts=Object.assign({},this.state.drafts,{[key]:raw});
+    const v=parseFloat(raw);
+    if(raw!==""&&!isNaN(v)) commit(v,drafts); else this.setState({drafts});
+  }
+  setNum(k){ return e=>this.draft(k,e.target.value,(v,drafts)=>this.setState({[k]:v,drafts})); }
   fmtU(v){ return (v>=0?"+":"")+Math.round(v); }
   autoPlace = ()=>{
     const c=this.currentCase(); this.gid=0;
@@ -822,14 +1128,17 @@ class Component extends DCLogic {
         eMech:this.fmtU(st.epsMech*1e6),eTO:this.fmtU(st.epsTO*1e6),R:st.R.toFixed(2),
         mechColor:st.epsMech>0?"#e07a4b":st.epsMech<0?"#4c8fd6":"#8b97a5",
         toColor:Math.abs(st.epsTO)>1e-7?"#e0b23d":"#8b97a5",
-        open:s.open===g.id, face:g.face, x:Math.round(g.x), orient:g.orient, arm:g.arm,
-        dummy:g.dummy?"1":"0", GF:g.GF, R0:g.R0, stc:(g.alphaStc*1e6).toFixed(1),
+        open:s.open===g.id, face:g.face, x:this.dv("g"+g.id+"x",Math.round(g.x)), orient:g.orient, arm:g.arm,
+        dummy:g.dummy?"1":"0", GF:this.dv("g"+g.id+"gf",g.GF), R0:this.dv("g"+g.id+"r0",g.R0),
+        stc:this.dv("g"+g.id+"stc",(g.alphaStc*1e6).toFixed(1)),
         toggle:()=>this.setState({open:s.open===g.id?null:g.id}),
-        setFace:e=>upd({face:e.target.value}), setX:e=>upd({x:parseFloat(e.target.value)||0}),
+        setFace:e=>upd({face:e.target.value}),
+        setX:e=>this.draft("g"+g.id+"x",e.target.value,(v,drafts)=>{upd({x:v});this.setState({drafts});}),
         setOrient:e=>upd({orient:e.target.value}), setArm:e=>upd({arm:parseInt(e.target.value)}),
-        setDummy:e=>upd({dummy:e.target.value==="1"}), setGF:e=>upd({GF:parseFloat(e.target.value)||2}),
-        setR0:e=>upd({R0:parseFloat(e.target.value)||350}),
-        setStc:e=>upd({alphaStc:(parseFloat(e.target.value)||0)*1e-6}),
+        setDummy:e=>upd({dummy:e.target.value==="1"}),
+        setGF:e=>this.draft("g"+g.id+"gf",e.target.value,(v,drafts)=>{upd({GF:v});this.setState({drafts});}),
+        setR0:e=>this.draft("g"+g.id+"r0",e.target.value,(v,drafts)=>{upd({R0:v});this.setState({drafts});}),
+        setStc:e=>this.draft("g"+g.id+"stc",e.target.value,(v,drafts)=>{upd({alphaStc:v*1e-6});this.setState({drafts});}),
         dup:()=>{this.gid=Math.max(this.gid,...s.gauges.map(x=>x.id))+1;
           const ng=Object.assign({},g,{id:this.gid,name:"G"+this.gid});
           this.setState({gauges:s.gauges.concat([ng]),open:ng.id});},
@@ -872,12 +1181,28 @@ class Component extends DCLogic {
       {k:"RMS displacement (true)",v:(m.rmsDTrue*1000).toFixed(3),u:"mm",color:"#6bbf6a"},
       {k:"RMS displacement (est.)",v:(m.rmsDEst*1000).toFixed(3),u:"mm",color:"#d9a441"},
       {k:"RMS displacement error",v:(m.rmsDErr*1000).toFixed(3),u:"mm",color:m.relD>20?"#e0684b":m.relD>5?"#e0b23d":"#dbe2ea"},
-      {k:"Relative displ. error",v:m.relD.toFixed(1),u:"%",color:m.relD>20?"#e0684b":m.relD>5?"#e0b23d":"#6bbf6a"}
+      {k:"Relative displ. error",v:m.relD.toFixed(1),u:"%",color:m.relD>20?"#e0684b":m.relD>5?"#e0b23d":"#6bbf6a"},
+      {k:"Phase error @ "+m.charF.toFixed(1)+" Hz",v:m.phaseDeg.toFixed(1),u:"°",
+       color:Math.abs(m.phaseDeg)>45?"#e0684b":Math.abs(m.phaseDeg)>10?"#e0b23d":"#6bbf6a"},
+      {k:"Equivalent time lag",v:m.lagMs.toFixed(2),u:"ms",
+       color:Math.abs(m.phaseDeg)>45?"#e0684b":"#dbe2ea"},
+      {k:"Gain error @ "+m.charF.toFixed(1)+" Hz",v:((this.sensorMag(acc,m.charF)-1)*100).toFixed(2),u:"%",
+       color:Math.abs(this.sensorMag(acc,m.charF)-1)>0.1?"#e0684b":Math.abs(this.sensorMag(acc,m.charF)-1)>0.02?"#e0b23d":"#6bbf6a"}
     ]:[];
     let accVerdict="Simulating …";
     if(m){
       const parts=[];
-      parts.push("The noise floor is "+fmtSI(m.noiseFloor)+" m/s² RMS over the "+(acc.fs/2).toFixed(0)+" Hz band, and the ADC step is "+fmtSI(m.lsb)+" m/s².");
+      parts.push("In-band noise is "+fmtSI(m.noiseFloor)+" m/s² RMS ("+m.specBand.lo.toFixed(2)+"–"+
+        m.specBand.hi.toFixed(0)+" Hz); total noise through the filter is "+fmtSI(m.noiseTotal)+
+        " m/s² RMS, of which "+fmtSI(m.nLoRms)+" comes from below the spec band where the density rises at "+
+        acc.lfSlope+" dB/decade. The ADC step is "+fmtSI(m.lsb)+" m/s².");
+      const tauNow=this.tauOf(acc);
+      if(tauNow&&this.charFreq(acc)<5/(2*Math.PI*tauNow))
+        parts.push("The excitation sits close to the high-pass corner at "+(1/(2*Math.PI*tauNow)).toFixed(3)+
+          " Hz, so both the "+((this.sensorMag(acc,this.charFreq(acc))-1)*100).toFixed(1)+
+          " % amplitude error and the atan(1/ωτ) phase lead are large — this is the dominant error, not the noise.");
+      if(Math.abs(m.phaseDeg)>10) parts.push("The readout lags the true motion by "+(-m.phaseDeg).toFixed(1)+
+        "° ("+m.lagMs.toFixed(2)+" ms) at "+m.charF.toFixed(1)+" Hz, which is most of the visible offset between the two acceleration traces.");
       if(m.clip>0.1) parts.push("The signal clips in "+m.clip.toFixed(1)+" % of the samples — increase the range.");
       if(m.snrA<20) parts.push("Sensor noise dominates the acceleration; pick a lower noise density or a larger motion.");
       if(m.relD>20) parts.push("Displacement from double integration is unreliable: low-frequency noise and bias are amplified by 1/ω². Raise the high-pass above "+acc.fhp.toFixed(2)+" Hz or use a sensor with lower bias drift.");
@@ -887,10 +1212,15 @@ class Component extends DCLogic {
     }
 
     const accSet={};
-    ["nd","bias","bi","sf","range","bits","bw","fs","amp","freq","std","fmin","fmax","fn","zeta","fhp","seed"]
-      .forEach(k=>{accSet[k]=e=>{const v=parseFloat(e.target.value); if(!isNaN(v)) this.rerun({[k]:v});};});
-    accSet.preset=e=>{const p=PRESETS[e.target.value];
-      this.rerun(Object.assign({},p&&p.nd!=null?{nd:p.nd,bias:p.bias,bi:p.bi,sf:p.sf,range:p.range,bits:p.bits,bw:p.bw}:{},{preset:e.target.value}));};
+    ["nd","bias","bi","sf","range","bits","bw","fs","nfLo","nfHi","lfSlope","lfCap","hfMult","tdel","phOff","tau","hpF1","hpDb1","hpF2","hpPct2","amp","freq","std","fmin","fmax","fn","zeta","fhp","seed"]
+      .forEach(k=>{accSet[k]=e=>this.draft("a_"+k,e.target.value,(v,drafts)=>this.rerun({[k]:v},drafts));});
+    accSet.preset=e=>{const p=s.presets[e.target.value];
+      const patch={};
+      if(p) Object.keys(PRESET_FIELDS).forEach(k=>{
+        const v=p[PRESET_FIELDS[k]]!==undefined?p[PRESET_FIELDS[k]]:p[k];
+        if(v!==undefined) patch[k]=v;
+      });
+      patch.preset=e.target.value; this.rerun(patch);};
 
     const seg=(active)=>({bg:active?"#39b7c6":"transparent",fg:active?"#04222a":"#8b97a5"});
     const motionOpts=Object.keys(MOTIONS).map(k=>Object.assign({v:k,label:MOTIONS[k],
@@ -909,19 +1239,23 @@ class Component extends DCLogic {
       scaleLabel:"±"+Math.round(this.fieldMax()*1e6)+" µε",
       beamRef:this.beamRef, bridgeRef:this.bridgeRef,
       onBeamDown:this.onBeamDown, onBeamMove:this.onBeamMove, onBeamUp:this.onBeamUp,
-      P:s.P, dT:s.dT, restraint:s.restraint, Vex:s.Vex, resGrad:s.resGrad, resTempco:s.resTempco,
-      L:s.L, h:s.h, Imm:+(s.I/1e6).toFixed(2), E:s.E, alphaU:+(s.alpha*1e6).toFixed(1), nu:s.nu,
-      leadLen:s.leadLen, leadRes:s.leadRes, profile:s.profile, caseId:s.caseId,
+      P:s.P, dT:s.dT, restraint:s.restraint, Vex:s.Vex, resGrad:s.resGrad,
+      resTempco:this.dv("resTempco",s.resTempco), clearDrafts:this.clearDrafts,
+      L:this.dv("L",s.L), h:this.dv("h",s.h), Imm:this.dv("I",+(s.I/1e6).toFixed(2)),
+      E:this.dv("E",s.E), alphaU:this.dv("alpha",+(s.alpha*1e6).toFixed(1)), nu:this.dv("nu",s.nu),
+      leadLen:this.dv("leadLen",s.leadLen), leadRes:this.dv("leadRes",s.leadRes), profile:s.profile, caseId:s.caseId,
       vP:s.P.toFixed(1)+" kN", vdT:(s.dT>=0?"+":"")+s.dT+" °C", vK:Math.round(s.restraint*100)+" %",
       vVex:s.Vex.toFixed(1)+" V", vResGrad:(s.resGrad>=0?"+":"")+s.resGrad+" °C",
       setP:this.set("P"), setdT:this.set("dT"), setRestraint:this.set("restraint"),
-      setVex:this.set("Vex"), setResGrad:this.set("resGrad"), setResTempco:this.set("resTempco"),
-      setLeadLen:this.set("leadLen"), setLeadRes:this.set("leadRes"),
-      setL:e=>{const L=parseFloat(e.target.value)||4000;
-        this.setState({L,gauges:s.gauges.map(g=>Object.assign({},g,{x:Math.min(g.x,L)}))});},
-      seth:this.set("h"), setI:e=>this.setState({I:(parseFloat(e.target.value)||1)*1e6}),
-      setE:this.set("E"), setAlpha:e=>this.setState({alpha:(parseFloat(e.target.value)||0)*1e-6}),
-      setNu:this.set("nu"),
+      setVex:this.set("Vex"), setResGrad:this.set("resGrad"), setResTempco:this.setNum("resTempco"),
+      setLeadLen:this.setNum("leadLen"), setLeadRes:this.setNum("leadRes"),
+      setL:e=>this.draft("L",e.target.value,(L,drafts)=>
+        this.setState({L,drafts,gauges:s.gauges.map(g=>Object.assign({},g,{x:Math.min(g.x,L)}))})),
+      seth:this.setNum("h"),
+      setI:e=>this.draft("I",e.target.value,(v,drafts)=>this.setState({I:v*1e6,drafts})),
+      setE:this.setNum("E"),
+      setAlpha:e=>this.draft("alpha",e.target.value,(v,drafts)=>this.setState({alpha:v*1e-6,drafts})),
+      setNu:this.setNum("nu"),
       setProfile:e=>{const v=e.target.value,p=PROFILES[v];
         this.setState(p?{profile:v,h:p.h,I:p.I*1e6}:{profile:v});},
       profileOpts:[{v:"heb160",label:"HEB 160"},{v:"heb200",label:"HEB 200"},{v:"heb240",label:"HEB 240"},
@@ -955,21 +1289,53 @@ class Component extends DCLogic {
         this.setState({gauges:s.gauges.concat([ng]),open:ng.id});},
       assumptions:"Assumptions: uniform ΔT, axially restrained ends (the restraint factor sets the degree), bending from a central transverse load. Top/bottom are the extreme fibres, front/back sit at the neutral axis. A transverse gauge reads −ν·ε. Apparent strain = (α_steel − α_STC)·ΔT. Completion resistors = 350 Ω.",
 
-      accV:{preset:acc.preset,nd:acc.nd,bias:acc.bias,bi:acc.bi,sf:acc.sf,range:acc.range,bits:acc.bits,
-        bw:acc.bw,fs:acc.fs,amp:acc.amp,freq:acc.freq,std:acc.std,fmin:acc.fmin,fmax:acc.fmax,
-        fn:acc.fn,zeta:acc.zeta,fhp:acc.fhp,seed:acc.seed},
-      accSet, presetOpts:Object.keys(PRESETS).map(k=>({v:k,label:PRESETS[k].label})),
+      accV:{preset:acc.preset,nd:this.dv("a_nd",acc.nd),bias:this.dv("a_bias",acc.bias),bi:this.dv("a_bi",acc.bi),sf:this.dv("a_sf",acc.sf),range:this.dv("a_range",acc.range),bits:this.dv("a_bits",acc.bits),
+        bw:this.dv("a_bw",acc.bw),fs:this.dv("a_fs",acc.fs),nfLo:this.dv("a_nfLo",acc.nfLo),nfHi:this.dv("a_nfHi",acc.nfHi),lfSlope:this.dv("a_lfSlope",acc.lfSlope),lfCap:this.dv("a_lfCap",acc.lfCap),
+        hfMult:this.dv("a_hfMult",acc.hfMult),tdel:this.dv("a_tdel",acc.tdel),phOff:this.dv("a_phOff",acc.phOff),
+        hpMode:acc.hpMode,tau:this.dv("a_tau",acc.tau),hpF1:this.dv("a_hpF1",acc.hpF1),hpDb1:this.dv("a_hpDb1",acc.hpDb1),hpF2:this.dv("a_hpF2",acc.hpF2),hpPct2:this.dv("a_hpPct2",acc.hpPct2),amp:this.dv("a_amp",acc.amp),freq:this.dv("a_freq",acc.freq),std:this.dv("a_std",acc.std),fmin:this.dv("a_fmin",acc.fmin),fmax:this.dv("a_fmax",acc.fmax),
+        fn:this.dv("a_fn",acc.fn),zeta:this.dv("a_zeta",acc.zeta),fhp:this.dv("a_fhp",acc.fhp),seed:this.dv("a_seed",acc.seed)},
+      accSet, presetOpts:Object.keys(s.presets).map(k=>({v:k,label:s.presets[k].label||k})),
+      presetNote:s.presetError?"sensors.js could not be loaded — only Custom is available.":
+        ((s.presets[acc.preset]&&s.presets[acc.preset].description)||
+         (Object.keys(s.presets).length-1)+" instruments loaded from sensors.js — edit that file to add more"),
       motionOpts, quantOpts,
       isHarmonic:acc.motion==="harmonic", isStochastic:acc.motion!=="harmonic",
       isBroadband:acc.motion==="white"||acc.motion==="pink", isDamped:acc.motion==="damped",
       ampUnit:acc.quantity==="acc"?"m/s²":acc.quantity==="vel"?"m/s":"m",
-      sensorNote:"Noise floor "+fmtSI(acc.nd*1e-6*G*Math.sqrt(acc.fs/2))+" m/s² RMS · ADC step "+
+      ndRef:this.ndRef,
+      hpModeOpts:[["none","DC-coupled"],["fit","Fit τ from gain error"],["manual","Set τ"]].map(([k,label])=>
+        Object.assign({v:k,label,on:()=>this.rerun({hpMode:k})},seg(acc.hpMode===k))),
+      hpIsFit:acc.hpMode==="fit", hpIsManual:acc.hpMode==="manual", hpOn:acc.hpMode!=="none",
+      tauNote:(()=>{
+        if(acc.hpMode==="none") return "DC-coupled: no low-frequency roll-off, so no low-frequency phase error.";
+        const t=this.tauFit(acc), tau=this.tauOf(acc), fc=1/(2*Math.PI*tau);
+        if(acc.hpMode==="manual") return "τ = "+tau.toFixed(3)+" s → corner 1/2πτ = "+fc.toFixed(3)+
+          " Hz. Phase error = atan(1/ωτ).";
+        return "τ from "+acc.hpDb1+" dB at "+acc.hpF1+" Hz: "+t.t1.toFixed(2)+" s · from "+acc.hpPct2+
+          " % at "+acc.hpF2+" Hz: "+t.t2.toFixed(2)+" s → using the geometric mean τ = "+tau.toFixed(2)+
+          " s (corner "+fc.toFixed(3)+" Hz). Phase error = atan(1/ωτ)"+
+          (Math.abs(Math.log(t.t1/t2Safe(t.t2)))>0.35?", and the two amplitude specs disagree — a single pole cannot satisfy both exactly.":".");})(),
+      frfRef:this.frfRef,
+      frfNote:"Solid: amplitude response — single-pole high-pass (τ) below, 2-pole roll-off at f_c = "+acc.bw+
+        " Hz. Dashed: phase, atan(1/ωτ) lead at low frequency plus the filter lag, "+acc.tdel+
+        " ms group time delay (phase error grows with frequency)"+
+        (acc.phOff?" and a "+acc.phOff+"° constant phase offset (same error at every frequency)":"")+" — at "+this.charFreq(acc).toFixed(1)+
+        " Hz the readout lags the true motion by "+(-this.sensorPhase(acc,this.charFreq(acc))).toFixed(1)+
+        "°. The shaded band is the spec band where the quoted noise density is valid.",
+      ndNote:"Gain error and noise density are independent specs that meet in this plot: the gain error is the deterministic |H(f)| that scales the signal, and the same |H(f)| scales the sensor's noise density — so it is the ratio of the two curves, not either one alone, that sets the signal-to-noise ratio. Noise density used by the simulation: grey dashed = the sensor's own density (quoted value inside the shaded spec band, rising at "+
+        acc.lfSlope+" dB/decade below it, ×"+acc.hfMult+" above it), cyan = what reaches the output after the sensor response. "+
+        (this.tauOf(acc)?"The high-pass at "+(1/(2*Math.PI*this.tauOf(acc))).toFixed(3)+" Hz suppresses the lowest-frequency noise.":"DC-coupled, so the low-frequency rise is passed through in full."),
+      sensorNote:"Density "+acc.nd+" µg/√Hz valid "+this.specBand(acc).lo.toFixed(2)+"–"+
+        this.specBand(acc).hi.toFixed(0)+" Hz → "+fmtSI(this.noiseFloor(acc))+" m/s² RMS in band · total "+
+        fmtSI(this.noiseTotal(acc))+" m/s² RMS (incl. "+fmtSI(sim?sim.m.nLoRms:0)+" below band) · ADC step "+
         fmtSI(2*acc.range*G/Math.pow(2,acc.bits))+" m/s² · Nyquist "+(acc.fs/2).toFixed(0)+" Hz · record "+
         (sim?(sim.N/sim.fs).toFixed(1)+" s ("+sim.N+" samples)":"—"),
+      zeroOffsets:()=>this.rerun({bias:0,bi:0,sf:0}),
+      offsetsAreZero:acc.bias===0&&acc.bi===0&&acc.sf===0,
       reroll:()=>this.rerun({seed:Math.floor(Math.random()*9999)+1}),
       accRef:this.accRef, dispRef:this.dispRef, psdRef:this.psdRef,
       metrics, accVerdict,
-      accAssumptions:"Sensor model: measured = true·(1+scale error) + offset + low-pass filtered bias drift + white noise from the noise density, then a 2-pole bandwidth filter, clipping against the range and ADC quantisation. Displacement is estimated by frequency-domain double integration with a high-pass and compared to the true displacement (both mean-removed). The record length is chosen automatically so it covers at least ten periods of the lowest frequency."
+      accAssumptions:"Sensor model: measured = true·(1+scale error) + offset + low-pass filtered bias drift + noise shaped by the density curve (the quoted density applies only inside the spec band; below it the density rises at the given dB/decade up to the cap, above it it is scaled by the out-of-band factor), then the sensor transfer function — a single-pole high-pass with time constant τ (|H| = ωτ/√(1+(ωτ)²), phase error atan(1/ωτ)) cascaded with a 2-pole low-pass at f_c, plus a group time delay (a true time shift: phase error −360·f·t_d, linear in frequency) and a constant phase offset (the same phase error at all frequencies, so not a time shift). τ is either set directly or fitted from two amplitude-error points from the data sheet, clipping against the range and ADC quantisation. Displacement is estimated by frequency-domain double integration with a high-pass and compared to the true displacement (both mean-removed). The record length is chosen automatically so it covers at least ten periods of the lowest frequency."
     };
   }
 }
