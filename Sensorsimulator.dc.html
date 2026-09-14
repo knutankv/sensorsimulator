@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<style>
+html,body{margin:0;background:#0e1216;-webkit-text-size-adjust:100%;overscroll-behavior-y:contain}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;color:#dbe2ea;-webkit-font-smoothing:antialiased}
+a{color:#39b7c6;text-decoration:none}a:hover{color:#6fd8e4}
+input[type=range]{accent-color:#39b7c6;width:100%;height:30px}
+select,input{font-family:inherit}
+</style>
+</helmet>
+<div style="max-width:480px;margin:0 auto;min-height:100vh;background:#12161b;padding:0 0 104px;box-shadow:0 0 60px rgba(0,0,0,.6)">
+
+  <header style="position:sticky;top:0;z-index:20;background:rgba(18,22,27,.94);backdrop-filter:blur(12px);border-bottom:1px solid #2c343d;padding:12px 16px 10px;display:flex;align-items:center;gap:12px">
+    <div style="min-width:0;flex:1">
+      <div style="font-size:16px;font-weight:650;letter-spacing:-.01em">{{ paneTitle }}</div>
+      <div style="font-size:11.5px;color:#8b97a5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ paneSub }}</div>
+    </div>
+    <div style="text-align:right;flex:none">
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:19px;font-weight:700;color:#d9a441;line-height:1">{{ headChipValue }}</div>
+      <div style="font-size:10px;color:#5f6b78;letter-spacing:.04em">{{ headChipUnit }}</div>
+    </div>
+  </header>
+
+  <!-- ============ BEAM ============ -->
+  <sc-if value="{{ tabBeam }}" hint-placeholder-val="{{ true }}">
+  <div style="padding:14px 16px 0">
+
+    <div style="background:linear-gradient(180deg,#1d242c,#191f26);border:1px solid #3a444f;border-radius:14px;padding:16px 16px 14px;margin-bottom:12px">
+      <div style="font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:#8b97a5">Indicated strain</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-top:2px">
+        <div style="font-family:ui-monospace,Menlo,monospace;font-size:46px;font-weight:700;letter-spacing:-.02em;color:#d9a441;line-height:1.05">{{ heroEps }}</div>
+        <div style="font-size:15px;color:#5f6b78">µε</div>
+      </div>
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#8b97a5;margin-top:6px">{{ heroSetup }}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">
+        <div style="background:#20272f;border:1px solid #2c343d;border-radius:9px;padding:8px 9px">
+          <div style="font-size:10px;color:#8b97a5;margin-bottom:2px">Vₒ/Vₑₓ</div>
+          <div style="font-family:ui-monospace,Menlo,monospace;font-size:13.5px;font-weight:600">{{ roRatio }}</div>
+        </div>
+        <div style="background:#20272f;border:1px solid #2c343d;border-radius:9px;padding:8px 9px">
+          <div style="font-size:10px;color:#8b97a5;margin-bottom:2px">Σ±ε</div>
+          <div style="font-family:ui-monospace,Menlo,monospace;font-size:13.5px;font-weight:600">{{ heroCombo }}</div>
+        </div>
+        <div style="background:#20272f;border:1px solid #2c343d;border-radius:9px;padding:8px 9px">
+          <div style="font-size:10px;color:#8b97a5;margin-bottom:2px">÷ k</div>
+          <div style="font-family:ui-monospace,Menlo,monospace;font-size:13.5px;font-weight:600">{{ roBF }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:12px 12px 10px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5">Strain field</div>
+        <div style="margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#5f6b78;border:1px solid #2c343d;border-radius:5px;padding:2px 7px">{{ scaleLabel }}</div>
+      </div>
+      <canvas ref="{{ beamRef }}" onPointerDown="{{ onBeamDown }}" onPointerMove="{{ onBeamMove }}" onPointerUp="{{ onBeamUp }}" style="display:block;width:100%;height:268px;touch-action:none;border-radius:9px"></canvas>
+      <div style="font-size:11.5px;color:#5f6b78;margin-top:8px;line-height:1.45">Drag a gauge along the beam or between faces. Orange = tension, blue = compression. The ends are axially restrained.</div>
+    </div>
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin-bottom:10px">Load &amp; temperature</div>
+
+      <div style="display:flex;align-items:baseline;gap:10px"><div style="font-size:13px;color:#8b97a5">Transverse load P (midspan)</div><div style="margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:13px">{{ vP }}</div></div>
+      <input type="range" min="-40" max="40" step="1" value="{{ P }}" onInput="{{ setP }}">
+
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:6px"><div style="font-size:13px;color:#8b97a5">Temperature change ΔT</div><div style="margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:13px">{{ vdT }}</div></div>
+      <input type="range" min="-50" max="50" step="1" value="{{ dT }}" onInput="{{ setdT }}">
+
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:6px"><div style="font-size:13px;color:#8b97a5">Axial restraint</div><div style="margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:13px">{{ vK }}</div></div>
+      <input type="range" min="0" max="1" step="0.05" value="{{ restraint }}" onInput="{{ setRestraint }}">
+      <div style="font-size:11px;color:#5f6b78;margin-top:2px">0 % = free expansion · 100 % = fully restrained</div>
+    </div>
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin-bottom:10px">Profile &amp; material</div>
+      <select value="{{ profile }}" onChange="{{ setProfile }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:11px 10px;font-size:14px;width:100%;min-height:44px">
+        <sc-for list="{{ profileOpts }}" as="p" hint-placeholder-count="5"><option value="{{ p.v }}">{{ p.label }}</option></sc-for>
+      </select>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">L (mm)</div><input type="number" step="100" value="{{ L }}" onChange="{{ setL }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">h (mm)</div><input type="number" step="5" value="{{ h }}" onChange="{{ seth }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">I (10⁶mm⁴)</div><input type="number" step="0.01" value="{{ Imm }}" onChange="{{ setI }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">E (MPa)</div><input type="number" step="1000" value="{{ E }}" onChange="{{ setE }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">α (µε/°C)</div><input type="number" step="0.1" value="{{ alphaU }}" onChange="{{ setAlpha }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">ν</div><input type="number" step="0.01" value="{{ nu }}" onChange="{{ setNu }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px 8px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+      </div>
+    </div>
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin-bottom:10px">Beam theory</div>
+      <sc-for list="{{ anaRows }}" as="r" hint-placeholder-count="2">
+        <div style="display:grid;grid-template-columns:1fr auto;gap:6px;padding:9px 0;border-bottom:1px solid #232a33">
+          <div style="font-size:13px">{{ r.name }}<span style="color:#5f6b78;font-size:11.5px"> · x={{ r.x }} mm</span></div>
+          <div style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:#8b97a5">M {{ r.M }} kNm</div>
+          <div style="grid-column:1/-1;display:flex;gap:14px;font-family:ui-monospace,Menlo,monospace;font-size:12px">
+            <div style="color:#e07a4b">topp {{ r.top }}</div><div style="color:#4c8fd6">bunn {{ r.bot }}</div><div style="color:#8b97a5">aks {{ r.th }}</div>
+          </div>
+        </div>
+      </sc-for>
+      <div style="font-size:11.5px;color:#5f6b78;line-height:1.5;margin-top:10px">{{ anaNote }}</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ BRIDGE ============ -->
+  <sc-if value="{{ tabBridge }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:14px 16px 0">
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin-bottom:10px">Bridge setup — case</div>
+      <select value="{{ caseId }}" onChange="{{ setCase }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:11px 10px;font-size:13.5px;width:100%;min-height:46px">
+        <sc-for list="{{ caseOpts }}" as="c" hint-placeholder-count="12"><option value="{{ c.v }}">{{ c.label }}</option></sc-for>
+      </select>
+      <div style="font-size:12px;color:#8b97a5;line-height:1.5;margin-top:10px;background:#20272f;border:1px solid #2c343d;border-radius:9px;padding:10px 11px">{{ caseDesc }}<span style="display:inline-block;margin-left:6px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid #3a444f;border-radius:5px;padding:1px 6px;color:{{ tempCompColor }}">{{ tempCompLabel }}</span></div>
+      <div style="display:flex;gap:6px;background:#20272f;border:1px solid #3a444f;border-radius:10px;padding:4px;margin-top:10px">
+        <sc-for list="{{ wiringOpts }}" as="w" hint-placeholder-count="2">
+          <button onClick="{{ w.on }}" style="flex:1;min-height:40px;border:none;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600;background:{{ w.bg }};color:{{ w.fg }}">{{ w.label }}</button>
+        </sc-for>
+      </div>
+      <button onClick="{{ autoPlace }}" style="width:100%;min-height:46px;margin-top:10px;background:#39b7c6;color:#04222a;border:none;border-radius:10px;font-size:14px;font-weight:650;font-family:inherit;cursor:pointer">Place gauges for this case</button>
+    </div>
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin-bottom:6px">Wheatstone bridge</div>
+      <canvas ref="{{ bridgeRef }}" style="display:block;width:100%;height:210px"></canvas>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:6px">
+        <div style="background:#20272f;border:1px solid #2c343d;border-radius:10px;padding:10px 11px"><div style="font-size:11.5px;color:#8b97a5;margin-bottom:2px">Output Vₒ</div><div style="font-family:ui-monospace,Menlo,monospace;font-size:17px;font-weight:600;color:#39b7c6">{{ roVo }} <span style="font-size:11px;color:#5f6b78">mV</span></div></div>
+        <div style="background:#20272f;border:1px solid #2c343d;border-radius:10px;padding:10px 11px"><div style="font-size:11.5px;color:#8b97a5;margin-bottom:2px">Vₒ/Vₑₓ</div><div style="font-family:ui-monospace,Menlo,monospace;font-size:17px;font-weight:600;color:#39b7c6">{{ roRatio }} <span style="font-size:11px;color:#5f6b78">mV/V</span></div></div>
+        <div style="background:#20272f;border:1px solid #2c343d;border-radius:10px;padding:10px 11px"><div style="font-size:11.5px;color:#8b97a5;margin-bottom:2px">Bridge factor k</div><div style="font-family:ui-monospace,Menlo,monospace;font-size:17px;font-weight:600">{{ roBF }}×</div></div>
+        <div style="background:#20272f;border:1px solid #2c343d;border-radius:10px;padding:10px 11px"><div style="font-size:11.5px;color:#8b97a5;margin-bottom:2px">Perfect STC</div><div style="font-family:ui-monospace,Menlo,monospace;font-size:17px;font-weight:600">{{ roAna }} <span style="font-size:11px;color:#5f6b78">µε</span></div></div>
+        <div style="grid-column:1/-1;background:#20272f;border:1px solid #3a444f;border-radius:10px;padding:11px 12px"><div style="font-size:11.5px;color:#8b97a5;margin-bottom:2px">Final indicated strain</div><div style="font-family:ui-monospace,Menlo,monospace;font-size:25px;font-weight:700;color:#d9a441">{{ heroEps }} <span style="font-size:12px;color:#5f6b78">µε</span></div></div>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:12px"><div style="font-size:13px;color:#8b97a5">Excitation Vₑₓ</div><div style="margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:13px">{{ vVex }}</div></div>
+      <input type="range" min="1" max="10" step="0.5" value="{{ Vex }}" onInput="{{ setVex }}">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px">
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Lead length (m)</div><input type="number" step="1" min="0" value="{{ leadLen }}" onChange="{{ setLeadLen }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Ω/m per conductor</div><input type="number" step="0.01" min="0" value="{{ leadRes }}" onChange="{{ setLeadRes }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+      </div>
+      <div style="display:flex;gap:9px;margin-top:12px">
+        <button onClick="{{ doCal }}" style="flex:1;min-height:46px;background:#39b7c6;color:#04222a;border:none;border-radius:10px;font-size:13.5px;font-weight:650;font-family:inherit;cursor:pointer">Calibrate (zero)</button>
+        <button onClick="{{ clearCal }}" style="flex:1;min-height:46px;background:transparent;color:#dbe2ea;border:1px solid #3a444f;border-radius:10px;font-size:13.5px;font-family:inherit;cursor:pointer">Clear calibration</button>
+      </div>
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;margin-top:8px;color:{{ calColor }}">{{ calText }}</div>
+      <div style="font-size:11.5px;color:#8b97a5;line-height:1.55;margin-top:12px;background:#20272f;border:1px solid #2c343d;border-left:2px solid #39b7c6;border-radius:9px;padding:10px 11px">{{ bridgeNote }}</div>
+    </div>
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin-bottom:10px">Error sources</div>
+      <div style="font-size:11.5px;color:#8b97a5;line-height:1.55">{{ leadNote }}</div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:12px"><div style="font-size:13px;color:#8b97a5">Sun/shade R₁ vs R₃</div><div style="margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:13px">{{ vResGrad }}</div></div>
+      <input type="range" min="-40" max="40" step="1" value="{{ resGrad }}" onInput="{{ setResGrad }}">
+      <div><div style="font-size:11px;color:#5f6b78;margin:6px 0 4px">Resistor tempco (ppm/°C)</div><input type="number" step="1" min="0" value="{{ resTempco }}" onChange="{{ setResTempco }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+      <div style="font-size:11.5px;color:#8b97a5;line-height:1.55;margin-top:10px">{{ resGradNote }}</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ GAUGES ============ -->
+  <sc-if value="{{ tabGauges }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:14px 16px 0">
+    <sc-for list="{{ gaugeCards }}" as="g" hint-placeholder-count="2">
+      <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;margin-bottom:12px;overflow:hidden">
+        <div onClick="{{ g.toggle }}" style="display:flex;align-items:center;gap:9px;padding:13px 14px;cursor:pointer">
+          <span style="width:12px;height:12px;border-radius:4px;flex:none;background:{{ g.color }}"></span>
+          <span style="font-family:ui-monospace,Menlo,monospace;font-size:14px">{{ g.name }}</span>
+          <span style="margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#8b97a5">{{ g.summary }}</span>
+        </div>
+        <div style="display:flex;gap:12px;padding:0 14px 12px;font-family:ui-monospace,Menlo,monospace;font-size:12px">
+          <div style="color:#5f6b78">ε<span style="font-size:10px">mek</span> <span style="color:{{ g.mechColor }}">{{ g.eMech }}</span></div>
+          <div style="color:#5f6b78">ε<span style="font-size:10px">temp</span> <span style="color:{{ g.toColor }}">{{ g.eTO }}</span></div>
+          <div style="color:#5f6b78">R <span style="color:#dbe2ea">{{ g.R }}Ω</span></div>
+        </div>
+        <sc-if value="{{ g.open }}" hint-placeholder-val="{{ false }}">
+          <div style="border-top:1px solid #2c343d;padding:12px 14px 14px;display:grid;grid-template-columns:1fr 1fr;gap:9px">
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Face</div>
+              <select value="{{ g.face }}" onChange="{{ g.setFace }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-size:13px;width:100%;min-height:44px">
+                <sc-for list="{{ faceOpts }}" as="f" hint-placeholder-count="4"><option value="{{ f.v }}">{{ f.label }}</option></sc-for>
+              </select></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">x (mm)</div><input type="number" step="10" value="{{ g.x }}" onChange="{{ g.setX }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Direction</div>
+              <select value="{{ g.orient }}" onChange="{{ g.setOrient }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-size:13px;width:100%;min-height:44px">
+                <option value="long">Along (‖)</option><option value="trans">Transverse (⊥)</option>
+              </select></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Bridge arm</div>
+              <select value="{{ g.arm }}" onChange="{{ g.setArm }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-size:13px;width:100%;min-height:44px">
+                <sc-for list="{{ armOpts }}" as="a" hint-placeholder-count="5"><option value="{{ a.v }}">{{ a.label }}</option></sc-for>
+              </select></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Dummy (unloaded)</div>
+              <select value="{{ g.dummy }}" onChange="{{ g.setDummy }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-size:13px;width:100%;min-height:44px">
+                <option value="0">no</option><option value="1">yes</option>
+              </select></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">GF</div><input type="number" step="0.01" value="{{ g.GF }}" onChange="{{ g.setGF }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">R₀ (Ω)</div><input type="number" step="10" value="{{ g.R0 }}" onChange="{{ g.setR0 }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">STC α (µε/°C)</div><input type="number" step="0.1" value="{{ g.stc }}" onChange="{{ g.setStc }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <button onClick="{{ g.dup }}" style="min-height:44px;background:transparent;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;font-size:13px;font-family:inherit;cursor:pointer">Duplicate</button>
+            <button onClick="{{ g.del }}" style="min-height:44px;background:transparent;border:1px solid #3a444f;color:#e0684b;border-radius:9px;font-size:13px;font-family:inherit;cursor:pointer">Delete</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+    <button onClick="{{ addGauge }}" style="width:100%;min-height:48px;background:transparent;border:1px dashed #3a444f;color:#8b97a5;border-radius:12px;font-size:14px;font-family:inherit;cursor:pointer">+ Add gauge</button>
+    <div style="font-size:11.5px;color:#5f6b78;line-height:1.55;margin-top:14px">{{ assumptions }}</div>
+  </div>
+  </sc-if>
+
+  <!-- ============ ACCELEROMETER ============ -->
+  <sc-if value="{{ tabAcc }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:14px 16px 0">
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin-bottom:10px">Sensor</div>
+      <select value="{{ accV.preset }}" onChange="{{ accSet.preset }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:11px 10px;font-size:13.5px;width:100%;min-height:46px">
+        <sc-for list="{{ presetOpts }}" as="p" hint-placeholder-count="4"><option value="{{ p.v }}">{{ p.label }}</option></sc-for>
+      </select>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px">
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Noise density (µg/√Hz)</div><input type="number" step="0.1" min="0" value="{{ accV.nd }}" onChange="{{ accSet.nd }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Offset bias (mg)</div><input type="number" step="0.1" value="{{ accV.bias }}" onChange="{{ accSet.bias }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Bias drift (mg RMS)</div><input type="number" step="0.01" min="0" value="{{ accV.bi }}" onChange="{{ accSet.bi }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Scale-factor error (%)</div><input type="number" step="0.05" value="{{ accV.sf }}" onChange="{{ accSet.sf }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Range (±g)</div><input type="number" step="1" min="0.1" value="{{ accV.range }}" onChange="{{ accSet.range }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">ADC (bit)</div><input type="number" step="1" min="6" max="24" value="{{ accV.bits }}" onChange="{{ accSet.bits }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Bandwidth (Hz)</div><input type="number" step="1" min="1" value="{{ accV.bw }}" onChange="{{ accSet.bw }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Sample rate (Hz)</div><input type="number" step="1" min="16" value="{{ accV.fs }}" onChange="{{ accSet.fs }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+      </div>
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#5f6b78;margin-top:10px;line-height:1.5">{{ sensorNote }}</div>
+    </div>
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin-bottom:10px">Motion at the sensor location</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#20272f;border:1px solid #3a444f;border-radius:10px;padding:4px">
+        <sc-for list="{{ motionOpts }}" as="m" hint-placeholder-count="4">
+          <button onClick="{{ m.on }}" style="min-height:40px;border:none;border-radius:7px;font-size:12.5px;cursor:pointer;font-family:inherit;font-weight:600;background:{{ m.bg }};color:{{ m.fg }}">{{ m.label }}</button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ isHarmonic }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:12px">
+          <div style="font-size:11px;color:#5f6b78;margin-bottom:6px">Specify amplitude as</div>
+          <div style="display:flex;gap:6px;background:#20272f;border:1px solid #3a444f;border-radius:10px;padding:4px">
+            <sc-for list="{{ quantOpts }}" as="q" hint-placeholder-count="3">
+              <button onClick="{{ q.on }}" style="flex:1;min-height:38px;border:none;border-radius:7px;font-size:12.5px;cursor:pointer;font-family:inherit;font-weight:600;background:{{ q.bg }};color:{{ q.fg }}">{{ q.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px">
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Amplitude ({{ ampUnit }})</div><input type="number" step="0.001" value="{{ accV.amp }}" onChange="{{ accSet.amp }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Frequency (Hz)</div><input type="number" step="0.1" min="0.1" value="{{ accV.freq }}" onChange="{{ accSet.freq }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isStochastic }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px">
+          <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Std σ (m/s²)</div><input type="number" step="0.01" min="0" value="{{ accV.std }}" onChange="{{ accSet.std }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Lower frequency (Hz)</div><input type="number" step="0.1" min="0.1" value="{{ accV.fmin }}" onChange="{{ accSet.fmin }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          <sc-if value="{{ isBroadband }}" hint-placeholder-val="{{ false }}">
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Upper frequency (Hz)</div><input type="number" step="1" min="1" value="{{ accV.fmax }}" onChange="{{ accSet.fmax }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          </sc-if>
+          <sc-if value="{{ isDamped }}" hint-placeholder-val="{{ false }}">
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Natural frequency fₙ (Hz)</div><input type="number" step="0.5" min="0.1" value="{{ accV.fn }}" onChange="{{ accSet.fn }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          </sc-if>
+          <sc-if value="{{ isDamped }}" hint-placeholder-val="{{ false }}">
+            <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Damping ζ (–)</div><input type="number" step="0.005" min="0.001" max="1" value="{{ accV.zeta }}" onChange="{{ accSet.zeta }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px">
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">High-pass for integration (Hz)</div><input type="number" step="0.05" min="0.01" value="{{ accV.fhp }}" onChange="{{ accSet.fhp }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+        <div><div style="font-size:11px;color:#5f6b78;margin-bottom:4px">Random seed</div><input type="number" step="1" min="1" value="{{ accV.seed }}" onChange="{{ accSet.seed }}" style="background:#20272f;border:1px solid #3a444f;color:#dbe2ea;border-radius:9px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;width:100%;min-height:44px"></div>
+      </div>
+      <button onClick="{{ reroll }}" style="width:100%;min-height:48px;margin-top:12px;background:#39b7c6;color:#04222a;border:none;border-radius:11px;font-size:14.5px;font-weight:650;font-family:inherit;cursor:pointer">Re-simulate</button>
+    </div>
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5">Acceleration — input vs. readout</div>
+        <div style="margin-left:auto;display:flex;gap:10px;font-size:10.5px;font-family:ui-monospace,Menlo,monospace">
+          <span style="color:#6bbf6a">■ true</span><span style="color:#39b7c6">■ measured</span>
+        </div>
+      </div>
+      <canvas ref="{{ accRef }}" style="display:block;width:100%;height:170px"></canvas>
+      <div style="display:flex;align-items:center;gap:8px;margin:14px 0 8px">
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5">Displacement — input vs. double-integrated</div>
+        <div style="margin-left:auto;display:flex;gap:10px;font-size:10.5px;font-family:ui-monospace,Menlo,monospace">
+          <span style="color:#6bbf6a">■ true</span><span style="color:#d9a441">■ estimated</span>
+        </div>
+      </div>
+      <canvas ref="{{ dispRef }}" style="display:block;width:100%;height:170px"></canvas>
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin:14px 0 8px">Spectrum (acceleration)</div>
+      <canvas ref="{{ psdRef }}" style="display:block;width:100%;height:150px"></canvas>
+    </div>
+
+    <div style="background:#1a2027;border:1px solid #2c343d;border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b97a5;margin-bottom:10px">Deviation: input vs. readout</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="8">
+          <div style="background:#20272f;border:1px solid #2c343d;border-radius:10px;padding:10px 11px">
+            <div style="font-size:11px;color:#8b97a5;margin-bottom:3px">{{ m.k }}</div>
+            <div style="font-family:ui-monospace,Menlo,monospace;font-size:16px;font-weight:600;color:{{ m.color }}">{{ m.v }} <span style="font-size:10.5px;color:#5f6b78">{{ m.u }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font-size:11.5px;color:#8b97a5;line-height:1.55;margin-top:12px;background:#20272f;border:1px solid #2c343d;border-left:2px solid #39b7c6;border-radius:9px;padding:10px 11px">{{ accVerdict }}</div>
+      <div style="font-size:11px;color:#5f6b78;line-height:1.55;margin-top:10px">{{ accAssumptions }}</div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+
+<nav style="position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;background:rgba(14,18,22,.96);backdrop-filter:blur(14px);border-top:1px solid #2c343d">
+  <div style="width:100%;max-width:480px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;padding:6px 6px calc(6px + env(safe-area-inset-bottom))">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+      <button onClick="{{ t.on }}" style="background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:56px;color:{{ t.color }}">
+        <span style="font-size:17px;line-height:1">{{ t.icon }}</span>
+        <span style="font-size:10.5px;letter-spacing:.01em;font-weight:600">{{ t.label }}</span>
+      </button>
+    </sc-for>
+  </div>
+</nav>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:900},&quot;defaultTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;beam&quot;,&quot;bridge&quot;,&quot;gauges&quot;,&quot;acc&quot;],&quot;default&quot;:&quot;beam&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Oppsett&quot;}}">
+const G = 9.80665;
+const ALPHA_CU = 0.00393;
+const COMPLETION_R = 350;
+const FACES = ["topp","bunn","forside","bakside"];
+const FACE_LABEL = {topp:"Top",bunn:"Bottom",forside:"Front",bakside:"Back"};
+const ARM_COLORS = ["#d9a441","#5ec6d0","#c98bd0","#8fce7a"];
+const PROFILES = {heb160:{h:160,I:24.92},heb200:{h:200,I:56.96},heb240:{h:240,I:112.6},heb300:{h:300,I:251.7}};
+
+const CASES = [
+ {n:1,name:"Quarter bridge — single",kexpr:"k = 1",kf:s=>1,meas:"axial + bending",temp:false,
+  desc:"1 active gauge. Axial and bending strain superimpose. Not temperature compensated.",
+  layout:[{arm:1,face:"bunn",orient:"long"}]},
+ {n:2,name:"Quarter bridge with dummy",kexpr:"k = 1",kf:s=>1,meas:"axial + bending",temp:true,
+  desc:"Active gauge + unloaded dummy on the same material. Temperature compensated.",
+  layout:[{arm:1,face:"bunn",orient:"long"},{arm:2,face:"forside",orient:"long",dummy:true}]},
+ {n:3,name:"Poisson half bridge",kexpr:"k = 1+ν",kf:s=>1+s.nu,meas:"axial force",temp:true,
+  desc:"2 active gauges, one rotated 90°. Measures axial force. Temperature compensated.",
+  layout:[{arm:1,face:"forside",orient:"long"},{arm:2,face:"forside",orient:"trans"}]},
+ {n:4,name:"Half bridge — bending",kexpr:"k = 2",kf:s=>2,meas:"bending",temp:true,
+  desc:"2 gauges on opposite faces. Measures bending only. Temperature compensated.",
+  layout:[{arm:1,face:"bunn",orient:"long"},{arm:2,face:"topp",orient:"long"}]},
+ {n:5,name:"Diagonal bridge",kexpr:"k = 2",kf:s=>2,meas:"axial force",temp:false,
+  desc:"2 gauges in diagonal arms. Measures axial force independent of bending. Not temperature compensated.",
+  layout:[{arm:1,face:"bunn",orient:"long"},{arm:3,face:"topp",orient:"long"}]},
+ {n:6,name:"Full bridge — one face",kexpr:"k = 2(1+ν)",kf:s=>2*(1+s.nu),meas:"axial + bending",temp:true,
+  desc:"4 gauges on one face. High signal, high CMR. Temperature compensated.",
+  layout:[{arm:1,face:"bunn",orient:"long"},{arm:2,face:"bunn",orient:"trans"},{arm:3,face:"bunn",orient:"long"},{arm:4,face:"bunn",orient:"trans"}]},
+ {n:7,name:"Diagonal bridge with dummies",kexpr:"k = 2",kf:s=>2,meas:"axial force",temp:true,
+  desc:"2 active + 2 passive. Measures axial force independent of bending. Temperature compensated.",
+  layout:[{arm:1,face:"bunn",orient:"long"},{arm:2,face:"forside",orient:"long",dummy:true},{arm:3,face:"topp",orient:"long"},{arm:4,face:"bakside",orient:"long",dummy:true}]},
+ {n:8,name:"Full bridge — bending",kexpr:"k = 4",kf:s=>4,meas:"bending",temp:true,
+  desc:"4 active (2+2). Bending only. High signal, high CMR. Temperature compensated.",
+  layout:[{arm:1,face:"bunn",orient:"long"},{arm:2,face:"topp",orient:"long"},{arm:3,face:"bunn",orient:"long"},{arm:4,face:"topp",orient:"long"}]},
+ {n:9,name:"Full bridge — axial (2×90°)",kexpr:"k = 2(1+ν)",kf:s=>2*(1+s.nu),meas:"axial force",temp:true,
+  desc:"4 active, 2 rotated 90°. Measures axial force independent of bending. Temperature compensated.",
+  layout:[{arm:1,face:"bunn",orient:"long"},{arm:2,face:"bunn",orient:"trans"},{arm:3,face:"topp",orient:"long"},{arm:4,face:"topp",orient:"trans"}]},
+ {n:10,name:"Full bridge — bending (2×90°)",kexpr:"k = 2(1+ν)",kf:s=>2*(1+s.nu),meas:"bending",temp:true,
+  desc:"4 active, 2 rotated 90°. Bending only. Excellent CMR. Temperature compensated.",
+  layout:[{arm:1,face:"bunn",orient:"long"},{arm:2,face:"topp",orient:"long"},{arm:3,face:"topp",orient:"trans"},{arm:4,face:"bunn",orient:"trans"}]},
+ {n:11,name:"Full bridge — bending, variant",kexpr:"k = 2(1+ν)",kf:s=>2*(1+s.nu),meas:"bending",temp:true,
+  desc:"4 active, 2 rotated 90°. Bending only. High signal, high CMR. Temperature compensated.",
+  layout:[{arm:1,face:"bunn",orient:"long"},{arm:2,face:"topp",orient:"long"},{arm:3,face:"topp",orient:"trans"},{arm:4,face:"bunn",orient:"trans"}]},
+ {n:12,name:"Half bridge — 4 gauges",kexpr:"k = 2(1+ν)",kf:s=>2*(1+s.nu),meas:"bending",temp:true,
+  desc:"4 active gauges wired as a half bridge. Bending only. Modelled as a full-bridge equivalent.",
+  layout:[{arm:1,face:"bunn",orient:"long"},{arm:2,face:"topp",orient:"long"},{arm:3,face:"topp",orient:"trans"},{arm:4,face:"bunn",orient:"trans"}]}
+];
+
+const PRESETS = {
+  consumer:{label:"MEMS consumer (phone)",nd:200,bias:20,bi:0.5,sf:1.5,range:8,bits:12,bw:200},
+  industrial:{label:"MEMS industrial",nd:25,bias:5,bi:0.05,sf:0.5,range:16,bits:16,bw:1000},
+  iepe:{label:"Piezoelectric IEPE",nd:5,bias:0.2,bi:0.01,sf:0.3,range:50,bits:24,bw:5000},
+  servo:{label:"Force-balance servo",nd:0.5,bias:1,bi:0.005,sf:0.05,range:2,bits:24,bw:300},
+  custom:{label:"Custom"}
+};
+const MOTIONS = {harmonic:"Harmonic",white:"White noise",pink:"Pink noise",damped:"Damped harmonic"};
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function fftRun(re,im,inv){
+  const n=re.length;
+  for(let i=1,j=0;i<n;i++){let bit=n>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;
+    if(i<j){const tr=re[i];re[i]=re[j];re[j]=tr;const ti=im[i];im[i]=im[j];im[j]=ti;}}
+  for(let len=2;len<=n;len<<=1){const ang=2*Math.PI/len*(inv?1:-1),half=len>>1;
+    for(let i=0;i<n;i+=len){for(let k=0;k<half;k++){
+      const wr=Math.cos(ang*k),wi=Math.sin(ang*k);
+      const xr=re[i+k+half],xi=im[i+k+half];
+      const vr=xr*wr-xi*wi,vi=xr*wi+xi*wr,ur=re[i+k],ui=im[i+k];
+      re[i+k]=ur+vr;im[i+k]=ui+vi;re[i+k+half]=ur-vr;im[i+k+half]=ui-vi;}}}
+  if(inv){for(let i=0;i<n;i++){re[i]/=n;im[i]/=n;}}
+}
+function rms(a){let s=0;for(let i=0;i<a.length;i++)s+=a[i]*a[i];return Math.sqrt(s/a.length);}
+function peak(a){let m=0;for(let i=0;i<a.length;i++)m=Math.max(m,Math.abs(a[i]));return m;}
+function demean(a){let s=0;for(let i=0;i<a.length;i++)s+=a[i];const m=s/a.length;const o=new Float64Array(a.length);for(let i=0;i<a.length;i++)o[i]=a[i]-m;return o;}
+
+class Component extends DCLogic {
+  state = {
+    tab: this.props.defaultTab || "beam",
+    caseId:1, wiring:3, Vex:5, leadLen:25, leadRes:0.13,
+    L:4000, h:200, I:56.96e6, E:210000, alpha:11.7e-6, nu:0.30,
+    P:10, dT:0, restraint:1, resTempco:10, resGrad:0,
+    profile:"heb200",
+    calOffset:null, calOffsetNoLead:null,
+    gauges:[{id:1,name:"G1",face:"topp",x:2000,t:0.5,orient:"long",GF:2.0,R0:350,alphaStc:11.7e-6,arm:1,dummy:false}],
+    open:1,
+    acc:{preset:"industrial",nd:25,bias:5,bi:0.05,sf:0.5,range:16,bits:16,bw:1000,fs:512,
+         motion:"harmonic",quantity:"disp",amp:0.002,freq:12,
+         std:0.5,fmin:1,fmax:120,fn:18,zeta:0.03,fhp:0.8,seed:7},
+    sim:null
+  };
+  gid = 1;
+  beamRef = React.createRef();
+  bridgeRef = React.createRef();
+  accRef = React.createRef();
+  dispRef = React.createRef();
+  psdRef = React.createRef();
+
+  componentDidMount(){
+    this.setState({sim:this.simulate(this.state.acc)});
+    this._ro = () => this.forceUpdate();
+    window.addEventListener("resize", this._ro);
+  }
+  componentWillUnmount(){ window.removeEventListener("resize", this._ro); }
+  componentDidUpdate(){ this.drawAll(); }
+
+  /* ---------- beam physics ---------- */
+  momentAt(x){const s=this.state,P=s.P*1000,L=s.L;const xx=(x<=L/2)?x:(L-x);return P/2*xx-P*L/8;}
+  yOfFace(f){const s=this.state;return f==="topp"?+s.h/2:f==="bunn"?-s.h/2:0;}
+  longMechStrain(face,x){const s=this.state;
+    return -s.restraint*s.alpha*s.dT + (-this.momentAt(x)*this.yOfFace(face)/(s.E*s.I));}
+  gaugeStrains(g,perfect){const s=this.state;
+    const longMech=g.dummy?0:this.longMechStrain(g.face,g.x);
+    const epsMech=(g.orient==="trans")?-s.nu*longMech:longMech;
+    const epsTO=perfect?0:(s.alpha-g.alphaStc)*s.dT;
+    const epsSensed=epsMech+epsTO, dR=g.R0*g.GF*epsSensed;
+    return {epsMech,epsTO,epsSensed,dR,R:g.R0+dR};}
+  currentCase(){return CASES.find(c=>c.n===this.state.caseId)||CASES[0];}
+  caseArms(){return [...new Set(this.currentCase().layout.map(l=>l.arm))].sort();}
+  armIsActive(a){return this.caseArms().includes(a);}
+  isFullBridge(){return this.caseArms().length===4;}
+  computeBridge(perfect,noLead,noGrad){
+    const s=this.state;
+    const RL0=s.leadRes*s.leadLen, RL=noLead?0:RL0*(1+ALPHA_CU*s.dT);
+    const R=[COMPLETION_R,COMPLETION_R,COMPLETION_R,COMPLETION_R], leadAdd=[0,0,0,0];
+    const armGauge={};
+    s.gauges.forEach(g=>{if(g.arm>=1&&g.arm<=4&&!armGauge[g.arm])armGauge[g.arm]=g;});
+    for(let a=1;a<=4;a++){ if(!armGauge[a]){ const dTr=noGrad?0:(a%2===1?+s.resGrad/2:-s.resGrad/2);
+      R[a-1]=COMPLETION_R*(1+s.resTempco*1e-6*dTr);} }
+    let gfRef=2.0, refG=null;
+    for(let a=1;a<=4;a++){const g=armGauge[a]; if(g){const st=this.gaugeStrains(g,perfect);R[a-1]=st.R;
+      if(!refG&&!g.dummy){refG=g;gfRef=g.GF;}}}
+    let senseFactor=1;
+    if(!this.isFullBridge()){
+      for(let a=1;a<=4;a++){const g=armGauge[a]; if(!g)continue;
+        if(s.wiring==2){leadAdd[a-1]+=2*RL;}
+        else{leadAdd[a-1]+=RL;const p=(a%2===1)?a+1:a-1;if(p>=1&&p<=4&&!armGauge[p])leadAdd[p-1]+=RL;}}
+      for(let i=0;i<4;i++)R[i]+=leadAdd[i];
+    } else if(s.wiring==4){ senseFactor=COMPLETION_R/(COMPLETION_R+2*RL); }
+    const ratioRaw=(R[0]/(R[0]+R[1])-R[3]/(R[2]+R[3]))*senseFactor;
+    const off=noLead?(s.calOffsetNoLead!=null?s.calOffsetNoLead:0):(s.calOffset!=null?s.calOffset:0);
+    const ratio=ratioRaw-off, Vo=ratio*s.Vex, bf=this.currentCase().kf(s);
+    const combo=4*ratio/gfRef;
+    return {R,ratio,ratioRaw,Vo,combo,epsInd:combo/bf,bf,gfRef,senseFactor,leadR:leadAdd};
+  }
+
+  /* ---------- accelerometer simulation ---------- */
+  doubleIntegrate(sig,fs,fhp){
+    const N=sig.length, re=new Float64Array(N), im=new Float64Array(N);
+    for(let i=0;i<N;i++)re[i]=sig[i];
+    fftRun(re,im,false);
+    for(let k=0;k<N;k++){
+      const kk = k<=N/2 ? k : k-N;
+      const f = Math.abs(kk)*fs/N;
+      if(f<fhp||k===0){re[k]=0;im[k]=0;continue;}
+      const w=2*Math.PI*f, s=-1/(w*w);
+      re[k]*=s; im[k]*=s;
+    }
+    fftRun(re,im,true);
+    return re;
+  }
+  spectrumShape(a,f){
+    if(a.motion==="white") return (f>=a.fmin&&f<=a.fmax)?1:0;
+    if(a.motion==="pink")  return (f>=a.fmin&&f<=a.fmax)?1/Math.sqrt(f):0;
+    if(a.motion==="damped"){ if(f<a.fmin) return 0; const r=f/a.fn;
+      return 1/Math.sqrt((1-r*r)*(1-r*r)+(2*a.zeta*r)*(2*a.zeta*r)); }
+    return 0;
+  }
+  lowestFreq(a){
+    if(a.motion==="harmonic") return Math.max(0.01,a.freq);
+    if(a.motion==="damped") return Math.max(0.01,Math.min(a.fn,a.fmin||a.fn));
+    return Math.max(0.01,a.fmin);
+  }
+  recordLength(a){
+    const fs=Math.max(16,a.fs), fLow=this.lowestFreq(a);
+    const need=Math.max(2, 10/fLow);          // at least ~10 cycles of the slowest content
+    let N=2048;
+    while(N/fs < need && N < 32768) N*=2;
+    return N;
+  }
+  simulate(a){
+    const N=this.recordLength(a), fs=Math.max(16,a.fs), dt=1/fs, T=N/fs;
+    const rnd=mulberry32(Math.floor(a.seed)*2654435761%4294967296+1);
+    const randn=()=>{let u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();
+      return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
+    let aTrue=new Float64Array(N), dTrue=null;
+    const nyq=fs/2;
+    if(a.motion==="harmonic"){
+      const f=Math.min(a.freq,nyq*0.9), w=2*Math.PI*f;
+      let A = a.quantity==="acc"?a.amp : a.quantity==="vel"?a.amp*w : a.amp*w*w;
+      dTrue=new Float64Array(N);
+      for(let i=0;i<N;i++){const t=i*dt;aTrue[i]=A*Math.sin(w*t);dTrue[i]=-A/(w*w)*Math.sin(w*t);}
+    } else {
+      const re=new Float64Array(N), im=new Float64Array(N);
+      for(let k=1;k<N/2;k++){
+        const f=k*fs/N, S=this.spectrumShape(a,f);
+        if(S<=0) continue;
+        const amp=S*randn(), ph=2*Math.PI*rnd();
+        re[k]=amp*Math.cos(ph); im[k]=amp*Math.sin(ph);
+        re[N-k]=re[k]; im[N-k]=-im[k];
+      }
+      fftRun(re,im,true);
+      const r0=rms(re)||1, sc=a.std/r0;
+      for(let i=0;i<N;i++)aTrue[i]=re[i]*sc;
+      dTrue=this.doubleIntegrate(aTrue,fs,Math.max(a.fmin*0.95,fs/N));
+    }
+    // sensor chain
+    const sigN=a.nd*1e-6*G*Math.sqrt(fs/2);
+    const biasOff=a.bias*1e-3*G, biasRw=a.bi*1e-3*G;
+    const tau=Math.max(2,T/6), alphaLp=dt/tau;
+    let drift=0; const meas=new Float64Array(N);
+    for(let i=0;i<N;i++){
+      drift += alphaLp*(-drift) + Math.sqrt(2*alphaLp)*biasRw*randn();
+      meas[i]=aTrue[i]*(1+a.sf/100)+biasOff+drift+sigN*randn();
+    }
+    // bandwidth (magnitude-only 2-pole roll-off)
+    if(a.bw<nyq){
+      const re=new Float64Array(N),im=new Float64Array(N);
+      for(let i=0;i<N;i++)re[i]=meas[i];
+      fftRun(re,im,false);
+      for(let k=0;k<N;k++){const kk=k<=N/2?k:k-N,f=Math.abs(kk)*fs/N;
+        const H=1/Math.sqrt(1+Math.pow(f/a.bw,4));re[k]*=H;im[k]*=H;}
+      fftRun(re,im,true);
+      for(let i=0;i<N;i++)meas[i]=re[i];
+    }
+    // clipping + quantisation
+    const lim=a.range*G, lsb=2*lim/Math.pow(2,a.bits);
+    let clipped=0;
+    for(let i=0;i<N;i++){
+      let v=meas[i];
+      if(v>lim){v=lim;clipped++;} else if(v<-lim){v=-lim;clipped++;}
+      meas[i]=Math.round(v/lsb)*lsb;
+    }
+    const dEst=this.doubleIntegrate(meas,fs,a.fhp);
+    // for a fair comparison both displacements are zero-mean
+    const dT0=demean(dTrue), dE0=demean(dEst);
+    const errA=new Float64Array(N), errD=new Float64Array(N);
+    for(let i=0;i<N;i++){errA[i]=meas[i]-aTrue[i];errD[i]=dE0[i]-dT0[i];}
+    // spectra
+    const psd=(sig)=>{const re=new Float64Array(N),im=new Float64Array(N);
+      for(let i=0;i<N;i++)re[i]=sig[i]*(0.5-0.5*Math.cos(2*Math.PI*i/(N-1)));
+      fftRun(re,im,false);const out=[];
+      for(let k=1;k<N/2;k++){const m=Math.sqrt(re[k]*re[k]+im[k]*im[k])*2/N;out.push({f:k*fs/N,a:m});}
+      return out;};
+    const rA=rms(aTrue), eA=rms(errA), rDt=rms(dT0), eD=rms(errD);
+    return {N,fs,dt,aTrue,meas,dTrue:dT0,dEst:dE0,
+      psdTrue:psd(aTrue),psdMeas:psd(meas),
+      m:{rmsATrue:rA,rmsAMeas:rms(meas),rmsAErr:eA,snrA:rA>0?20*Math.log10(rA/Math.max(eA,1e-15)):0,
+         peakA:peak(aTrue),rmsDTrue:rDt,rmsDEst:rms(dE0),rmsDErr:eD,
+         relD:rDt>0?100*eD/rDt:0,peakD:peak(dT0),clip:100*clipped/N,
+         noiseFloor:sigN,lsb,driftRms:biasRw}};
+  }
+  rerun(patch){
+    const acc=Object.assign({},this.state.acc,patch);
+    if(patch && !("preset" in patch)) acc.preset="custom";
+    this.setState({acc,sim:this.simulate(acc)});
+  }
+
+  /* ---------- canvas drawing ---------- */
+  prep(ref,h){
+    const cv=ref.current; if(!cv) return null;
+    const w=cv.clientWidth||360, dpr=window.devicePixelRatio||1;
+    cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+    const ctx=cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h); return {ctx,w,h};
+  }
+  strainColor(eps,maxAbs){
+    if(maxAbs<1e-12) return "rgb(35,42,51)";
+    const t=Math.max(-1,Math.min(1,eps/maxAbs));
+    const mid=[35,42,51], ten=[217,134,61], comp=[63,127,196];
+    const to=t>=0?ten:comp, k=Math.abs(t);
+    return "rgb("+mid.map((c,i)=>Math.round(c+(to[i]-c)*k)).join(",")+")";
+  }
+  fieldMax(){let m=0;FACES.forEach(f=>{for(let i=0;i<=24;i++)m=Math.max(m,Math.abs(this.longMechStrain(f,this.state.L*i/24)));});return m;}
+  beamGeom(w,h){
+    const left=58, right=w-10, top=16, bandH=(h-46)/4-8;
+    return {left,right,top,bandH,step:bandH+8};
+  }
+  drawBeam(){
+    const p=this.prep(this.beamRef,268); if(!p) return;
+    const {ctx,w,h}=p, s=this.state, gm=this.beamGeom(w,h), maxAbs=this.fieldMax();
+    ctx.fillStyle="#20272f"; ctx.fillRect(0,0,w,h);
+    FACES.forEach((face,i)=>{
+      const y=gm.top+i*gm.step;
+      for(let px=gm.left;px<gm.right;px+=3){
+        const x=(px-gm.left)/(gm.right-gm.left)*s.L;
+        ctx.fillStyle=this.strainColor(this.longMechStrain(face,x),maxAbs);
+        ctx.fillRect(px,y,3.2,gm.bandH);
+      }
+      ctx.strokeStyle="#39424c"; ctx.lineWidth=1;
+      ctx.strokeRect(gm.left+.5,y+.5,gm.right-gm.left-1,gm.bandH-1);
+      ctx.fillStyle="#9aa6b3"; ctx.font="11px -apple-system,system-ui,sans-serif"; ctx.textAlign="right";
+      ctx.fillText(FACE_LABEL[face],gm.left-7,y+gm.bandH/2+4);
+    });
+    // supports
+    ctx.fillStyle="#161b21";
+    ctx.fillRect(gm.left-10,gm.top-6,8,4*gm.step);
+    ctx.fillRect(gm.right+2,gm.top-6,8,4*gm.step);
+    // x ticks
+    ctx.textAlign="center"; ctx.fillStyle="#5f6b78"; ctx.font="10px ui-monospace,Menlo,monospace";
+    for(let k=0;k<=4;k++){
+      const px=gm.left+(gm.right-gm.left)*k/4;
+      ctx.fillText(Math.round(s.L*k/4)+"",px,h-14);
+    }
+    ctx.fillStyle="#5f6b78"; ctx.fillText("x (mm)",(gm.left+gm.right)/2,h-2);
+    // gauges
+    s.gauges.forEach(g=>{
+      const i=FACES.indexOf(g.face), y=gm.top+i*gm.step;
+      const cx=gm.left+(g.x/s.L)*(gm.right-gm.left), cy=y+gm.bandH/2;
+      const col=g.dummy?"#8a97a5":(this.armIsActive(g.arm)?ARM_COLORS[g.arm-1]:"#6b7681");
+      const along=g.orient==="long", wg=along?30:18, hg=along?18:26;
+      ctx.fillStyle="#171c22"; ctx.strokeStyle=col; ctx.lineWidth=this.state.open===g.id?2.2:1.5;
+      ctx.beginPath(); ctx.roundRect(cx-wg/2,cy-hg/2,wg,hg,3); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle=col; ctx.lineWidth=1.1; ctx.globalAlpha=.85;
+      for(let k=-1;k<=1;k++){
+        ctx.beginPath();
+        if(along){ctx.moveTo(cx-wg/2+4,cy+k*4);ctx.lineTo(cx+wg/2-4,cy+k*4);}
+        else{ctx.moveTo(cx+k*4,cy-hg/2+4);ctx.lineTo(cx+k*4,cy+hg/2-4);}
+        ctx.stroke();
+      }
+      ctx.globalAlpha=1;
+      ctx.fillStyle=col; ctx.font="9.5px ui-monospace,Menlo,monospace"; ctx.textAlign="center";
+      ctx.fillText((g.dummy?"dummy":g.name)+(this.armIsActive(g.arm)?" a"+g.arm:""),cx,cy+hg/2+11);
+    });
+  }
+  drawBridge(b){
+    const p=this.prep(this.bridgeRef,210); if(!p) return;
+    const {ctx,w,h}=p;
+    const cx=w/2, A=[cx,26],B=[w-52,h/2],C=[cx,h-40],D=[52,h/2];
+    const arms=[[A,B],[B,C],[C,D],[D,A]];
+    const armG={}; this.state.gauges.forEach(g=>{if(g.arm>=1&&g.arm<=4&&!armG[g.arm])armG[g.arm]=g;});
+    ctx.font="10px ui-monospace,Menlo,monospace"; ctx.textAlign="center";
+    ctx.fillStyle="#8b97a5"; ctx.fillText("V+",cx,14); ctx.fillText("V−",cx,h-22);
+    arms.forEach((seg,idx)=>{
+      const a=idx+1, g=armG[a], active=this.armIsActive(a)&&!!g;
+      const col=active?(g.dummy?"#8a97a5":ARM_COLORS[a-1]):"#5f6b78";
+      ctx.strokeStyle=col; ctx.lineWidth=active?3:1.8; ctx.globalAlpha=active?1:.6;
+      ctx.setLineDash(active&&g.dummy?[5,4]:[]);
+      ctx.beginPath(); ctx.moveTo(seg[0][0],seg[0][1]); ctx.lineTo(seg[1][0],seg[1][1]); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha=1;
+      const mx=(seg[0][0]+seg[1][0])/2, my=(seg[0][1]+seg[1][1])/2;
+      ctx.fillStyle=col; ctx.beginPath(); ctx.arc(mx,my,3.4,0,7); ctx.fill();
+      ctx.font="9.5px ui-monospace,Menlo,monospace";
+      ctx.textAlign=idx===1?"left":idx===3?"right":"center";
+      const lx=mx+(idx===1?10:idx===3?-10:0), ly=my+(idx===0?-8:idx===2?15:4);
+      ctx.fillText((active?(g.dummy?"dummy ":g.name+" "):"R ")+b.R[idx].toFixed(1)+"Ω",lx,ly);
+    });
+    ctx.fillStyle="#dbe2ea";
+    [A,B,C,D].forEach(n=>{ctx.beginPath();ctx.arc(n[0],n[1],2.6,0,7);ctx.fill();});
+    ctx.fillStyle="#39b7c6"; ctx.textAlign="left"; ctx.fillText("Vo",B[0]+8,B[1]-8);
+  }
+  plot(ref,height,series,opts){
+    const p=this.prep(ref,height); if(!p) return;
+    const {ctx,w,h}=p, pad={l:44,r:8,t:10,b:20};
+    ctx.fillStyle="#20272f"; ctx.fillRect(0,0,w,h);
+    const iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+    let mx=0; series.forEach(s=>{mx=Math.max(mx,peak(s.data));});
+    if(mx<=0) mx=1;
+    mx*=1.15;
+    ctx.strokeStyle="#2c343d"; ctx.lineWidth=1;
+    [-1,-0.5,0,0.5,1].forEach(f=>{
+      const y=pad.t+ih/2-f*ih/2;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke();
+    });
+    ctx.fillStyle="#5f6b78"; ctx.font="9.5px ui-monospace,Menlo,monospace"; ctx.textAlign="right";
+    ctx.fillText(opts.fmt(mx),pad.l-5,pad.t+8);
+    ctx.fillText("0",pad.l-5,pad.t+ih/2+3);
+    ctx.fillText(opts.fmt(-mx),pad.l-5,pad.t+ih-1);
+    ctx.textAlign="left"; ctx.fillText(opts.unit,pad.l+2,h-6);
+    ctx.textAlign="right"; ctx.fillText(opts.tmax.toFixed(2)+" s",w-pad.r,h-6);
+    const n=series[0].data.length;
+    series.forEach(s=>{
+      ctx.strokeStyle=s.color; ctx.lineWidth=s.w||1.4; ctx.globalAlpha=s.alpha||1;
+      ctx.beginPath();
+      for(let i=0;i<n;i++){
+        const x=pad.l+iw*i/(n-1), y=pad.t+ih/2-(s.data[i]/mx)*ih/2;
+        i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+      }
+      ctx.stroke(); ctx.globalAlpha=1;
+    });
+  }
+  drawPsd(sim){
+    const p=this.prep(this.psdRef,150); if(!p) return;
+    const {ctx,w,h}=p, pad={l:44,r:8,t:10,b:20};
+    ctx.fillStyle="#20272f"; ctx.fillRect(0,0,w,h);
+    const iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+    const all=sim.psdTrue.concat(sim.psdMeas);
+    let mx=1e-12; all.forEach(d=>{mx=Math.max(mx,d.a);});
+    const hi=Math.log10(mx)+0.3, lo=hi-6;
+    const f0=Math.max(sim.fs/2048,0.1), f1=sim.fs/2;
+    const X=f=>pad.l+iw*(Math.log10(f)-Math.log10(f0))/(Math.log10(f1)-Math.log10(f0));
+    const Y=a=>pad.t+ih*(1-(Math.log10(Math.max(a,1e-14))-lo)/(hi-lo));
+    ctx.strokeStyle="#2c343d";
+    for(let d=Math.ceil(Math.log10(f0));d<=Math.log10(f1);d++){
+      const x=X(Math.pow(10,d)); ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,pad.t+ih); ctx.stroke();
+      ctx.fillStyle="#5f6b78"; ctx.font="9.5px ui-monospace,Menlo,monospace"; ctx.textAlign="center";
+      ctx.fillText(Math.pow(10,d)+" Hz",x,h-6);
+    }
+    [[sim.psdMeas,"#39b7c6"],[sim.psdTrue,"#6bbf6a"]].forEach(([d,c])=>{
+      ctx.strokeStyle=c; ctx.lineWidth=1.2; ctx.globalAlpha=.95; ctx.beginPath();
+      d.forEach((pt,i)=>{const x=X(pt.f),y=Y(pt.a);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+      ctx.stroke(); ctx.globalAlpha=1;
+    });
+    ctx.fillStyle="#5f6b78"; ctx.textAlign="right"; ctx.font="9.5px ui-monospace,Menlo,monospace";
+    ctx.fillText("m/s² (log)",pad.l-5,pad.t+8);
+  }
+  drawAll(){
+    if(this.state.tab==="beam") this.drawBeam();
+    if(this.state.tab==="bridge") this.drawBridge(this.computeBridge(false));
+    if(this.state.tab==="acc" && this.state.sim){
+      const fLow=this.lowestFreq(this.state.acc);
+      const s=this.state.sim;
+      const span=Math.max(64,Math.min(s.N, Math.round(s.fs*Math.max(2, 5/fLow))));
+      const cut=a=>a.subarray(0,span);
+      this.plot(this.accRef,170,[
+        {data:cut(s.aTrue),color:"#6bbf6a",w:1.6},
+        {data:cut(s.meas),color:"#39b7c6",w:1.1,alpha:.9}],
+        {unit:"m/s²",tmax:span/s.fs,fmt:v=>v.toFixed(Math.abs(v)<1?2:1)});
+      this.plot(this.dispRef,170,[
+        {data:cut(s.dTrue),color:"#6bbf6a",w:1.6},
+        {data:cut(s.dEst),color:"#d9a441",w:1.2,alpha:.95}],
+        {unit:"mm",tmax:span/s.fs,fmt:v=>(v*1000).toFixed(2)});
+      this.drawPsd(s);
+    }
+  }
+
+  /* ---------- beam drag ---------- */
+  beamPoint(e){
+    const cv=this.beamRef.current, r=cv.getBoundingClientRect();
+    return {x:e.clientX-r.left,y:e.clientY-r.top,w:r.width,h:r.height};
+  }
+  onBeamDown = (e)=>{
+    const p=this.beamPoint(e), gm=this.beamGeom(p.w,p.h), s=this.state;
+    let best=null,bd=1e9;
+    s.gauges.forEach(g=>{
+      const i=FACES.indexOf(g.face), y=gm.top+i*gm.step+gm.bandH/2;
+      const cx=gm.left+(g.x/s.L)*(gm.right-gm.left);
+      const d=Math.hypot(cx-p.x,y-p.y); if(d<bd){bd=d;best=g;}
+    });
+    if(best&&bd<44){ this._drag=best.id; this.setState({open:best.id});
+      e.currentTarget.setPointerCapture(e.pointerId); }
+  };
+  onBeamMove = (e)=>{
+    if(!this._drag) return;
+    const p=this.beamPoint(e), gm=this.beamGeom(p.w,p.h), s=this.state;
+    const x=Math.max(0,Math.min(s.L,(p.x-gm.left)/(gm.right-gm.left)*s.L));
+    let bi=0,bd=1e9;
+    for(let i=0;i<4;i++){const c=gm.top+i*gm.step+gm.bandH/2;const d=Math.abs(p.y-c);if(d<bd){bd=d;bi=i;}}
+    this.setState({gauges:s.gauges.map(g=>g.id===this._drag?Object.assign({},g,{x:Math.round(x),face:FACES[bi]}):g)});
+  };
+  onBeamUp = ()=>{ this._drag=null; };
+
+  /* ---------- helpers ---------- */
+  set(k){ return e=>this.setState({[k]:parseFloat(e.target.value)}); }
+  fmtU(v){ return (v>=0?"+":"")+Math.round(v); }
+  autoPlace = ()=>{
+    const c=this.currentCase(); this.gid=0;
+    const gs=c.layout.map(l=>{ this.gid++;
+      return {id:this.gid,name:"G"+this.gid,face:l.face,x:Math.round(this.state.L/2),t:.5,
+        orient:l.orient||"long",GF:2.0,R0:350,alphaStc:11.7e-6,arm:l.arm,dummy:!!l.dummy};});
+    this.setState({gauges:gs,open:null});
+  };
+
+  renderVals(){
+    const s=this.state, acc=s.acc;
+    const b=this.computeBridge(false), bIdeal=this.computeBridge(true),
+          bNoLead=this.computeBridge(false,true), bNoGrad=this.computeBridge(false,false,true);
+    const cs=this.currentCase(), full=this.isFullBridge();
+    const epsPerfect=bIdeal.epsInd;
+    const leadUE=(b.epsInd-bNoLead.epsInd)*1e6, gradUE=(b.epsInd-bNoGrad.epsInd)*1e6;
+
+    const TITLES={beam:["Beam & strain field","Fixed–fixed beam, HEB profile"],
+      bridge:["Wheatstone bridge","Case "+cs.n+" · "+s.wiring+"-wire"],
+      gauges:["Strain gauges","Placement, bridge arm and properties"],
+      acc:["Accelerometer","Sensor readout vs. true motion"]};
+    const tabDefs=[["beam","Beam","▤"],["bridge","Bridge","◇"],["gauges","Gauges","▥"],["acc","Accel","∿"]];
+    const tabs=tabDefs.map(([k,label,icon])=>({key:k,label,icon,
+      color:s.tab===k?"#39b7c6":"#6b7681", on:()=>this.setState({tab:k})}));
+
+    const anaRows=[["Quarter point",s.L/4],["Midspan",s.L/2]].map(([name,x])=>{
+      const M=this.momentAt(x), th=-s.restraint*s.alpha*s.dT, c=s.h/2;
+      return {name,x:Math.round(x),M:(M/1e6).toFixed(2),
+        top:this.fmtU((th-M*c/(s.E*s.I))*1e6),bot:this.fmtU((th+M*c/(s.E*s.I))*1e6),th:this.fmtU(th*1e6)};
+    });
+
+    const gaugeCards=s.gauges.map(g=>{
+      const st=this.gaugeStrains(g);
+      const upd=patch=>this.setState({gauges:s.gauges.map(x=>x.id===g.id?Object.assign({},x,patch):x)});
+      return {id:g.id,name:g.dummy?"dummy "+g.name:g.name,
+        color:g.dummy?"#8a97a5":(this.armIsActive(g.arm)?ARM_COLORS[g.arm-1]:"#6b7681"),
+        summary:FACE_LABEL[g.face]+" · x="+Math.round(g.x)+" · "+(g.orient==="long"?"‖":"⊥")+(this.armIsActive(g.arm)?" · arm "+g.arm:" · unused"),
+        eMech:this.fmtU(st.epsMech*1e6),eTO:this.fmtU(st.epsTO*1e6),R:st.R.toFixed(2),
+        mechColor:st.epsMech>0?"#e07a4b":st.epsMech<0?"#4c8fd6":"#8b97a5",
+        toColor:Math.abs(st.epsTO)>1e-7?"#e0b23d":"#8b97a5",
+        open:s.open===g.id, face:g.face, x:Math.round(g.x), orient:g.orient, arm:g.arm,
+        dummy:g.dummy?"1":"0", GF:g.GF, R0:g.R0, stc:(g.alphaStc*1e6).toFixed(1),
+        toggle:()=>this.setState({open:s.open===g.id?null:g.id}),
+        setFace:e=>upd({face:e.target.value}), setX:e=>upd({x:parseFloat(e.target.value)||0}),
+        setOrient:e=>upd({orient:e.target.value}), setArm:e=>upd({arm:parseInt(e.target.value)}),
+        setDummy:e=>upd({dummy:e.target.value==="1"}), setGF:e=>upd({GF:parseFloat(e.target.value)||2}),
+        setR0:e=>upd({R0:parseFloat(e.target.value)||350}),
+        setStc:e=>upd({alphaStc:(parseFloat(e.target.value)||0)*1e-6}),
+        dup:()=>{this.gid=Math.max(this.gid,...s.gauges.map(x=>x.id))+1;
+          const ng=Object.assign({},g,{id:this.gid,name:"G"+this.gid});
+          this.setState({gauges:s.gauges.concat([ng]),open:ng.id});},
+        del:()=>this.setState({gauges:s.gauges.filter(x=>x.id!==g.id),open:null})};
+    });
+
+    const wiringOpts=(full?[4,6]:[2,3]).map(wv=>({v:wv,label:wv+"-wire"+(wv===6?" (sense)":""),
+      bg:s.wiring===wv?"#39b7c6":"transparent", fg:s.wiring===wv?"#04222a":"#8b97a5",
+      on:()=>this.setState({wiring:wv})}));
+    if(!wiringOpts.some(o=>o.v===s.wiring)) setTimeout(()=>this.setState({wiring:full?4:3}),0);
+
+    let bridgeNote;
+    if(!s.gauges.some(g=>this.armIsActive(g.arm))){
+      bridgeNote="No gauge is assigned to an active arm. Put at least one gauge in arm 1 to get an output.";
+    }else{
+      const diff=(b.epsInd-epsPerfect)*1e6;
+      bridgeNote="Indicated "+this.fmtU(b.epsInd*1e6)+" µε vs. perfect STC "+this.fmtU(epsPerfect*1e6)+
+        " µε — deviation "+this.fmtU(diff)+" µε. Σ±ε = 4·(Vo/Vex)/GF = "+this.fmtU(b.combo*1e6)+
+        " µε, divided by k = "+b.bf.toFixed(2)+" gives the indicated strain. "+
+        (Math.abs(diff)>1?"The difference comes from imperfect STC matching and the leads.":"Good match — STC and wiring reproduce the real mechanical strain.")+
+        (full?" Sensitivity factor "+b.senseFactor.toFixed(4)+(s.wiring==6?" (sense leads correct the excitation drop).":" = R₀/(R₀+2R_L); choose 6-wire for correction."):"");
+    }
+    const leadNote=Math.abs(leadUE)<0.5?"Lead error: negligible (R_L ≈ 0).":
+      "Lead error: the leads contribute "+this.fmtU(leadUE)+" µε to the reading "+
+      (full?"(sensitivity loss on the excitation side"+(s.wiring==6?", sense corrects it).":", choose 6-wire).")
+           :(s.wiring==2?"(2-wire does not cancel drift — use 3-wire).":"(3-wire cancels the drift, the rest is desensitisation).")) +
+      " Calibration only removes the part present at the calibration temperature.";
+    const resGradNote=Math.abs(gradUE)<0.5?"No appreciable drift in the completion resistors right now.":
+      "Sun/shade on R₁/R₃ produces "+this.fmtU(gradUE)+" µε of apparent strain — "+
+      (full?"a full bridge has no completion resistors, so this should be ~0."
+           :"3-wire does not remove it; the bridge arms themselves drift. Only a full bridge is immune.");
+
+    const sim=s.sim, m=sim?sim.m:null;
+    const fmtSI=(v,d)=>Math.abs(v)>=0.01?v.toFixed(d||3):v.toExponential(1);
+    const metrics=m?[
+      {k:"RMS acceleration (true)",v:fmtSI(m.rmsATrue),u:"m/s²",color:"#6bbf6a"},
+      {k:"RMS acceleration (measured)",v:fmtSI(m.rmsAMeas),u:"m/s²",color:"#39b7c6"},
+      {k:"RMS acceleration error",v:fmtSI(m.rmsAErr),u:"m/s²",color:m.rmsAErr>0.1*m.rmsATrue?"#e0b23d":"#dbe2ea"},
+      {k:"Acceleration SNR",v:m.snrA.toFixed(1),u:"dB",color:m.snrA<20?"#e0684b":m.snrA<40?"#e0b23d":"#6bbf6a"},
+      {k:"RMS displacement (true)",v:(m.rmsDTrue*1000).toFixed(3),u:"mm",color:"#6bbf6a"},
+      {k:"RMS displacement (est.)",v:(m.rmsDEst*1000).toFixed(3),u:"mm",color:"#d9a441"},
+      {k:"RMS displacement error",v:(m.rmsDErr*1000).toFixed(3),u:"mm",color:m.relD>20?"#e0684b":m.relD>5?"#e0b23d":"#dbe2ea"},
+      {k:"Relative displ. error",v:m.relD.toFixed(1),u:"%",color:m.relD>20?"#e0684b":m.relD>5?"#e0b23d":"#6bbf6a"}
+    ]:[];
+    let accVerdict="Simulating …";
+    if(m){
+      const parts=[];
+      parts.push("The noise floor is "+fmtSI(m.noiseFloor)+" m/s² RMS over the "+(acc.fs/2).toFixed(0)+" Hz band, and the ADC step is "+fmtSI(m.lsb)+" m/s².");
+      if(m.clip>0.1) parts.push("The signal clips in "+m.clip.toFixed(1)+" % of the samples — increase the range.");
+      if(m.snrA<20) parts.push("Sensor noise dominates the acceleration; pick a lower noise density or a larger motion.");
+      if(m.relD>20) parts.push("Displacement from double integration is unreliable: low-frequency noise and bias are amplified by 1/ω². Raise the high-pass above "+acc.fhp.toFixed(2)+" Hz or use a sensor with lower bias drift.");
+      else if(m.relD>5) parts.push("Displacement has a moderate error — mostly from the high-pass at "+acc.fhp.toFixed(2)+" Hz.");
+      else parts.push("Displacement is reconstructed well within the measurement band.");
+      accVerdict=parts.join(" ");
+    }
+
+    const accSet={};
+    ["nd","bias","bi","sf","range","bits","bw","fs","amp","freq","std","fmin","fmax","fn","zeta","fhp","seed"]
+      .forEach(k=>{accSet[k]=e=>{const v=parseFloat(e.target.value); if(!isNaN(v)) this.rerun({[k]:v});};});
+    accSet.preset=e=>{const p=PRESETS[e.target.value];
+      this.rerun(Object.assign({},p&&p.nd!=null?{nd:p.nd,bias:p.bias,bi:p.bi,sf:p.sf,range:p.range,bits:p.bits,bw:p.bw}:{},{preset:e.target.value}));};
+
+    const seg=(active)=>({bg:active?"#39b7c6":"transparent",fg:active?"#04222a":"#8b97a5"});
+    const motionOpts=Object.keys(MOTIONS).map(k=>Object.assign({v:k,label:MOTIONS[k],
+      on:()=>this.rerun({motion:k})},seg(acc.motion===k)));
+    const quantOpts=[["acc","Acceleration"],["vel","Velocity"],["disp","Displacement"]].map(([k,label])=>
+      Object.assign({v:k,label,on:()=>this.rerun({quantity:k})},seg(acc.quantity===k)));
+
+    return {
+      tabs, paneTitle:TITLES[s.tab][0], paneSub:TITLES[s.tab][1],
+      headChipValue: s.tab==="acc" ? (m?m.snrA.toFixed(0):"–") : this.fmtU(b.epsInd*1e6),
+      headChipUnit: s.tab==="acc" ? "dB SNR" : "µε indicated",
+      tabBeam:s.tab==="beam", tabBridge:s.tab==="bridge", tabGauges:s.tab==="gauges", tabAcc:s.tab==="acc",
+
+      heroEps:this.fmtU(b.epsInd*1e6), heroCombo:this.fmtU(b.combo*1e6),
+      heroSetup:"Case "+cs.n+" · "+cs.name+" · "+cs.kexpr+" · "+s.wiring+"-wire · GF "+b.gfRef.toFixed(2),
+      scaleLabel:"±"+Math.round(this.fieldMax()*1e6)+" µε",
+      beamRef:this.beamRef, bridgeRef:this.bridgeRef,
+      onBeamDown:this.onBeamDown, onBeamMove:this.onBeamMove, onBeamUp:this.onBeamUp,
+      P:s.P, dT:s.dT, restraint:s.restraint, Vex:s.Vex, resGrad:s.resGrad, resTempco:s.resTempco,
+      L:s.L, h:s.h, Imm:+(s.I/1e6).toFixed(2), E:s.E, alphaU:+(s.alpha*1e6).toFixed(1), nu:s.nu,
+      leadLen:s.leadLen, leadRes:s.leadRes, profile:s.profile, caseId:s.caseId,
+      vP:s.P.toFixed(1)+" kN", vdT:(s.dT>=0?"+":"")+s.dT+" °C", vK:Math.round(s.restraint*100)+" %",
+      vVex:s.Vex.toFixed(1)+" V", vResGrad:(s.resGrad>=0?"+":"")+s.resGrad+" °C",
+      setP:this.set("P"), setdT:this.set("dT"), setRestraint:this.set("restraint"),
+      setVex:this.set("Vex"), setResGrad:this.set("resGrad"), setResTempco:this.set("resTempco"),
+      setLeadLen:this.set("leadLen"), setLeadRes:this.set("leadRes"),
+      setL:e=>{const L=parseFloat(e.target.value)||4000;
+        this.setState({L,gauges:s.gauges.map(g=>Object.assign({},g,{x:Math.min(g.x,L)}))});},
+      seth:this.set("h"), setI:e=>this.setState({I:(parseFloat(e.target.value)||1)*1e6}),
+      setE:this.set("E"), setAlpha:e=>this.setState({alpha:(parseFloat(e.target.value)||0)*1e-6}),
+      setNu:this.set("nu"),
+      setProfile:e=>{const v=e.target.value,p=PROFILES[v];
+        this.setState(p?{profile:v,h:p.h,I:p.I*1e6}:{profile:v});},
+      profileOpts:[{v:"heb160",label:"HEB 160"},{v:"heb200",label:"HEB 200"},{v:"heb240",label:"HEB 240"},
+        {v:"heb300",label:"HEB 300"},{v:"custom",label:"Custom"}],
+      anaRows,
+      anaNote:"Fixed–fixed beam with a central point load: M(support) = −PL/8, M(midspan) = +PL/8. The inflection points sit at the quarter points, so bending strain there is zero and only −k·α·ΔT remains.",
+
+      caseOpts:CASES.map(c=>({v:c.n,label:c.n+". "+c.name+" — "+c.kexpr})),
+      setCase:e=>{this.setState({caseId:parseInt(e.target.value)},()=>{
+        this.setState({wiring:this.isFullBridge()?4:3}); this.autoPlace();});},
+      caseDesc:cs.desc, tempCompLabel:cs.temp?"temp. comp.":"no temp. comp.",
+      tempCompColor:cs.temp?"#6bbf6a":"#e0b23d",
+      wiringOpts, autoPlace:this.autoPlace,
+      roVo:(b.Vo*1000).toFixed(3), roRatio:(b.ratio*1000).toFixed(3),
+      roBF:b.bf.toFixed(2), roAna:this.fmtU(epsPerfect*1e6),
+      calText:s.calOffset!=null?"Zeroed at "+(s.calOffset*1000).toFixed(3)+" mV/V — values are the change from the calibration point.":"Uncalibrated — absolute bridge output shown.",
+      calColor:s.calOffset!=null?"#6bbf6a":"#8b97a5",
+      doCal:()=>this.setState({calOffset:this.computeBridge(false).ratioRaw,
+        calOffsetNoLead:this.computeBridge(false,true).ratioRaw}),
+      clearCal:()=>this.setState({calOffset:null,calOffsetNoLead:null}),
+      bridgeNote, leadNote, resGradNote,
+
+      gaugeCards,
+      faceOpts:FACES.map(f=>({v:f,label:FACE_LABEL[f]})),
+      armOpts:[1,2,3,4].map(a=>({v:a,label:"arm "+a+(this.armIsActive(a)?"":" (unused)")})).concat([{v:0,label:"none"}]),
+      addGauge:()=>{this.gid=Math.max(this.gid,...s.gauges.map(x=>x.id),0)+1;
+        const used=new Set(s.gauges.map(x=>x.arm));
+        let arm=0; for(const a of this.caseArms()){if(!used.has(a)){arm=a;break;}}
+        const ng={id:this.gid,name:"G"+this.gid,face:"forside",x:Math.round(s.L/2),t:.5,
+          orient:"long",GF:2.0,R0:350,alphaStc:11.7e-6,arm,dummy:false};
+        this.setState({gauges:s.gauges.concat([ng]),open:ng.id});},
+      assumptions:"Assumptions: uniform ΔT, axially restrained ends (the restraint factor sets the degree), bending from a central transverse load. Top/bottom are the extreme fibres, front/back sit at the neutral axis. A transverse gauge reads −ν·ε. Apparent strain = (α_steel − α_STC)·ΔT. Completion resistors = 350 Ω.",
+
+      accV:{preset:acc.preset,nd:acc.nd,bias:acc.bias,bi:acc.bi,sf:acc.sf,range:acc.range,bits:acc.bits,
+        bw:acc.bw,fs:acc.fs,amp:acc.amp,freq:acc.freq,std:acc.std,fmin:acc.fmin,fmax:acc.fmax,
+        fn:acc.fn,zeta:acc.zeta,fhp:acc.fhp,seed:acc.seed},
+      accSet, presetOpts:Object.keys(PRESETS).map(k=>({v:k,label:PRESETS[k].label})),
+      motionOpts, quantOpts,
+      isHarmonic:acc.motion==="harmonic", isStochastic:acc.motion!=="harmonic",
+      isBroadband:acc.motion==="white"||acc.motion==="pink", isDamped:acc.motion==="damped",
+      ampUnit:acc.quantity==="acc"?"m/s²":acc.quantity==="vel"?"m/s":"m",
+      sensorNote:"Noise floor "+fmtSI(acc.nd*1e-6*G*Math.sqrt(acc.fs/2))+" m/s² RMS · ADC step "+
+        fmtSI(2*acc.range*G/Math.pow(2,acc.bits))+" m/s² · Nyquist "+(acc.fs/2).toFixed(0)+" Hz · record "+
+        (sim?(sim.N/sim.fs).toFixed(1)+" s ("+sim.N+" samples)":"—"),
+      reroll:()=>this.rerun({seed:Math.floor(Math.random()*9999)+1}),
+      accRef:this.accRef, dispRef:this.dispRef, psdRef:this.psdRef,
+      metrics, accVerdict,
+      accAssumptions:"Sensor model: measured = true·(1+scale error) + offset + low-pass filtered bias drift + white noise from the noise density, then a 2-pole bandwidth filter, clipping against the range and ADC quantisation. Displacement is estimated by frequency-domain double integration with a high-pass and compared to the true displacement (both mean-removed). The record length is chosen automatically so it covers at least ten periods of the lowest frequency."
+    };
+  }
+}
+
+</script>
+</body>
+</html>
