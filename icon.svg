@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect x="1" y="1" width="62" height="62" rx="14" fill="#12161b" stroke="#2c343d" stroke-width="2"/>
+  <!-- strain gauge foil grid -->
+  <path d="M20 47V14H28V44H36V14H44V47" fill="none" stroke="#39b7c6" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- solder tabs -->
+  <rect x="14" y="45" width="12" height="9" rx="2.5" fill="#d9a441"/>
+  <rect x="38" y="45" width="12" height="9" rx="2.5" fill="#d9a441"/>
+</svg>
